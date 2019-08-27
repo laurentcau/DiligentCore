@@ -92,7 +92,8 @@ class ShaderResourcesD3D12 final : public ShaderResources
 {
 public:
     // Loads shader resources from the compiled shader bytecode
-    ShaderResourcesD3D12(ID3DBlob* pShaderBytecode, const ShaderDesc& ShdrDesc, const char* CombinedSamplerSuffix);
+    ShaderResourcesD3D12(ID3DBlob* pShaderBytecode, const ShaderDesc& ShdrDesc, const char* CombinedSamplerSuffix,
+						 const TShaderReflectionCallbacks& ShaderReflectionCallbacks);
 
     // clang-format off
     ShaderResourcesD3D12             (const ShaderResourcesD3D12&)  = delete;
