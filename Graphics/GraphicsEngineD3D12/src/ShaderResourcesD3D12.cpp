@@ -99,7 +99,8 @@ static bool IsDXILBytecode(ID3DBlob* pBytecodeBlob)
 ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
                                            const ShaderDesc& ShdrDesc,
                                            const char*       CombinedSamplerSuffix,
-                                           IDXCompiler*      pDXCompiler) :
+                                           IDXCompiler*      pDXCompiler,
+											const TShaderReflectionCallbacks& ShaderReflectionCallbacks) :
     ShaderResources{ShdrDesc.ShaderType}
 {
     class NewResourceHandler
@@ -115,6 +116,7 @@ ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
         void OnNewAccelStruct(const D3DShaderResourceAttribs& ASAttribs)     {}
         // clang-format on
     };
+    Initialize<D3D12_SHADER_DESC, D3D12_SHADER_INPUT_BIND_DESC, D3D12_SHADER_BUFFER_DESC, D3D12_SHADER_VARIABLE_DESC, D3D12_SHADER_TYPE_DESC, ID3D12ShaderReflection>(
 
     CComPtr<ID3D12ShaderReflection> pShaderReflection;
     if (IsDXILBytecode(pShaderBytecode))
@@ -137,7 +139,9 @@ ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
         pShaderReflection,
         NewResourceHandler{},
         ShdrDesc.Name,
-        CombinedSamplerSuffix);
+        CombinedSamplerSuffix,
+		ShaderReflectionCallbacks
+    );
 }
 
 } // namespace Diligent
