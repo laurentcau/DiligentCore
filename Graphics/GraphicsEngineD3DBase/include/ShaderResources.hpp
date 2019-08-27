@@ -58,7 +58,10 @@
 
 #include <memory>
 
-#define NOMINMAX
+#ifndef NOMINMAX
+#	define NOMINMAX
+#endif
+
 #include <d3dcommon.h>
 
 #include "ShaderD3D.h"
@@ -391,14 +394,19 @@ public:
     }
 
 protected:
-    template <typename D3D_SHADER_DESC,
-              typename D3D_SHADER_INPUT_BIND_DESC,
-              typename TShaderReflection,
-              typename TNewResourceHandler>
-    void Initialize(TShaderReflection*  pShaderReflection,
-                    TNewResourceHandler NewResHandler,
+    template<typename D3D_SHADER_DESC,
+             typename D3D_SHADER_INPUT_BIND_DESC,
+             typename D3D_SHADER_BUFFER_DESC,
+             typename D3D_SHADER_VARIABLE_DESC,
+             typename D3D_SHADER_TYPE_DESC,
+             typename TShaderReflection,
+             typename TNewResourceHandler>
+    void Initialize(TShaderReflection*  pShaderReflection, 
+                    TNewResourceHandler NewResHandler, 
                     const Char*         ShaderName,
-                    const Char*         SamplerSuffix);
+                    const Char*         SamplerSuffix, 
+					const TShaderReflectionCallbacks& ShaderReflectionCallbacks
+	);
 
 
     __forceinline D3DShaderResourceAttribs& GetResAttribs(Uint32 n, Uint32 NumResources, Uint32 Offset) noexcept
@@ -457,16 +465,21 @@ private:
 
 
 template <typename D3D_SHADER_DESC,
-          typename D3D_SHADER_INPUT_BIND_DESC,
-          typename TShaderReflection,
-          typename TNewResourceHandler>
+         typename D3D_SHADER_INPUT_BIND_DESC,
+         typename D3D_SHADER_BUFFER_DESC,
+         typename D3D_SHADER_VARIABLE_DESC,
+         typename D3D_SHADER_TYPE_DESC,
+         typename TShaderReflection, 
+         typename TNewResourceHandler>
 void ShaderResources::Initialize(TShaderReflection*  pShaderReflection,
                                  TNewResourceHandler NewResHandler,
                                  const Char*         ShaderName,
-                                 const Char*         CombinedSamplerSuffix)
+                                 const Char*         CombinedSamplerSuffix,
+								 const TShaderReflectionCallbacks& ShaderReflectionCallbacks
+)
 {
     Uint32 CurrCB = 0, CurrTexSRV = 0, CurrTexUAV = 0, CurrBufSRV = 0, CurrBufUAV = 0, CurrSampler = 0;
-    LoadD3DShaderResources<D3D_SHADER_DESC, D3D_SHADER_INPUT_BIND_DESC>(
+    LoadD3DShaderResources<D3D_SHADER_DESC, D3D_SHADER_INPUT_BIND_DESC, D3D_SHADER_BUFFER_DESC, D3D_SHADER_VARIABLE_DESC, D3D_SHADER_TYPE_DESC, TShaderReflection>(
         pShaderReflection,
 
         [&](const D3D_SHADER_DESC& d3dShaderDesc) //
@@ -533,8 +546,8 @@ void ShaderResources::Initialize(TShaderReflection*  pShaderReflection,
             }
             ++CurrTexSRV;
             NewResHandler.OnNewTexSRV(*pNewTexSRV);
-        } //
-    );
+        },
+		ShaderReflectionCallbacks);
 
     m_ShaderName = m_ResourceNames.CopyString(ShaderName);
 

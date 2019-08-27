@@ -37,6 +37,7 @@
 #    include <cstdint>
 #    include <string>
 #endif
+	typedef double      Float64; ///< 64-bit float
 
 DILIGENT_BEGIN_NAMESPACE(Diligent)
 
