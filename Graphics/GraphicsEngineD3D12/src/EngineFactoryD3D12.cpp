@@ -301,11 +301,14 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
                 // Suppress whole categories of messages
                 //D3D12_MESSAGE_CATEGORY Categories[] = {};
 
-                // Suppress messages based on their severity level
-                D3D12_MESSAGE_SEVERITY Severities[] =
-                    {
-                        D3D12_MESSAGE_SEVERITY_INFO //
-                    };
+				pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+				pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+
+		        // Suppress messages based on their severity level
+		        D3D12_MESSAGE_SEVERITY Severities[] = 
+		        {
+			        D3D12_MESSAGE_SEVERITY_INFO //
+		        };
 
                 // Suppress individual messages by their ID
                 //D3D12_MESSAGE_ID DenyIds[] = {};
