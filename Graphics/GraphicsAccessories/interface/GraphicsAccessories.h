@@ -99,10 +99,24 @@ template<>struct VALUE_TYPE2CType<VT_FLOAT16>{ typedef Uint16 CType; };
 ///     VALUE_TYPE2CType<VT_FLOAT32>::CType MyFloat32Var;
 template<>struct VALUE_TYPE2CType<VT_FLOAT32>{ typedef Float32 CType; };
 
+/// VALUE_TYPE2CType<> template specialization for full-precision 32-bit floating-point value type.
+
+/// Usage example:
+///
+///     VALUE_TYPE2CType<VT_Bool>::CType MyBoolVar;
+template<>struct VALUE_TYPE2CType<VT_BOOL> { typedef Bool CType; };
+
+/// VALUE_TYPE2CType<> template specialization for full-precision 32-bit floating-point value type.
+
+/// Usage example:
+///
+///     VALUE_TYPE2CType<VT_FLOAT64>::CType MyFloat64Var;
+template<>struct VALUE_TYPE2CType<VT_FLOAT64> { typedef Float64 CType; };
 
 static const Uint32 ValueTypeToSizeMap[] = 
 {
     0,
+	sizeof(VALUE_TYPE2CType<VT_BOOL>    :: CType),
     sizeof(VALUE_TYPE2CType<VT_INT8>    :: CType),
     sizeof(VALUE_TYPE2CType<VT_INT16>   :: CType),
     sizeof(VALUE_TYPE2CType<VT_INT32>   :: CType),
@@ -110,9 +124,10 @@ static const Uint32 ValueTypeToSizeMap[] =
     sizeof(VALUE_TYPE2CType<VT_UINT16>  :: CType),
     sizeof(VALUE_TYPE2CType<VT_UINT32>  :: CType),
     sizeof(VALUE_TYPE2CType<VT_FLOAT16> :: CType),
-    sizeof(VALUE_TYPE2CType<VT_FLOAT32> :: CType)
+    sizeof(VALUE_TYPE2CType<VT_FLOAT32> :: CType),
+	sizeof(VALUE_TYPE2CType<VT_FLOAT64> :: CType)
 };
-static_assert(VT_NUM_TYPES == VT_FLOAT32 + 1, "Not all value type sizes initialized.");
+static_assert(VT_NUM_TYPES == VT_FLOAT64 + 1, "Not all value type sizes initialized.");
 
 /// Returns the size of the specified value type
 inline Uint32 GetValueSize(VALUE_TYPE Val)

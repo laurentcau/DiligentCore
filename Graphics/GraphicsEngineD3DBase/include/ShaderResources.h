@@ -54,7 +54,10 @@
 
 #include <memory>
 
-#define NOMINMAX
+#ifndef NOMINMAX
+#	define NOMINMAX
+#endif
+
 #include <d3dcommon.h>
 
 #include "ShaderD3D.h"
@@ -367,14 +370,19 @@ public:
     }
 
 protected:
-    template<typename D3D_SHADER_DESC, 
-             typename D3D_SHADER_INPUT_BIND_DESC,
+	template<typename D3D_SHADER_DESC,
+			 typename D3D_SHADER_INPUT_BIND_DESC,
+			 typename D3D_SHADER_BUFFER_DESC,
+			 typename D3D_SHADER_VARIABLE_DESC,
+			 typename D3D_SHADER_TYPE_DESC,
              typename TShaderReflection,
              typename TNewResourceHandler>
     void Initialize(ID3DBlob*           pShaderByteCode, 
                     TNewResourceHandler NewResHandler, 
                     const Char*         ShaderName,
-                    const Char*         SamplerSuffix);
+                    const Char*         SamplerSuffix, 
+					const TShaderReflectionCallbacks& ShaderReflectionCallbacks
+	);
 
 
     __forceinline D3DShaderResourceAttribs& GetResAttribs(Uint32 n, Uint32 NumResources, Uint32 Offset)noexcept
@@ -430,17 +438,22 @@ private:
 };
 
 
-template<typename D3D_SHADER_DESC, 
-         typename D3D_SHADER_INPUT_BIND_DESC,
+template<typename D3D_SHADER_DESC,
+			typename D3D_SHADER_INPUT_BIND_DESC,
+			typename D3D_SHADER_BUFFER_DESC,
+			typename D3D_SHADER_VARIABLE_DESC,
+			typename D3D_SHADER_TYPE_DESC,
          typename TShaderReflection, 
          typename TNewResourceHandler>
 void ShaderResources::Initialize(ID3DBlob*           pShaderByteCode, 
                                  TNewResourceHandler NewResHandler,
                                  const Char*         ShaderName,
-                                 const Char*         CombinedSamplerSuffix)
+                                 const Char*         CombinedSamplerSuffix,
+								 const TShaderReflectionCallbacks& ShaderReflectionCallbacks
+)
 {
     Uint32 CurrCB = 0, CurrTexSRV = 0, CurrTexUAV = 0, CurrBufSRV = 0, CurrBufUAV = 0, CurrSampler = 0;
-    LoadD3DShaderResources<D3D_SHADER_DESC, D3D_SHADER_INPUT_BIND_DESC, TShaderReflection>(
+    LoadD3DShaderResources<D3D_SHADER_DESC, D3D_SHADER_INPUT_BIND_DESC, D3D_SHADER_BUFFER_DESC, D3D_SHADER_VARIABLE_DESC, D3D_SHADER_TYPE_DESC, TShaderReflection>(
         pShaderByteCode,
 
         [&](const D3D_SHADER_DESC& d3dShaderDesc)
@@ -507,7 +520,8 @@ void ShaderResources::Initialize(ID3DBlob*           pShaderByteCode,
             }
             ++CurrTexSRV;
             NewResHandler.OnNewTexSRV(*pNewTexSRV);
-        });
+        },
+		ShaderReflectionCallbacks);
 
     m_ShaderName = m_ResourceNames.CopyString(ShaderName);
 

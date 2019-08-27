@@ -41,9 +41,11 @@ namespace Diligent
     /// This enumeration describes value type. It is used by
     /// - BufferDesc structure to describe value type of a formatted buffer
     /// - DrawAttribs structure to describe index type for an indexed draw call
+	/// - Constant buffer layout reflection
     enum VALUE_TYPE : Uint8
     {
         VT_UNDEFINED = 0, ///< Undefined type
+		VT_BOOL,
         VT_INT8,          ///< Signed 8-bit integer
         VT_INT16,         ///< Signed 16-bit integer
         VT_INT32,         ///< Signed 32-bit integer
@@ -52,6 +54,7 @@ namespace Diligent
         VT_UINT32,        ///< Unsigned 32-bit integer
         VT_FLOAT16,       ///< Half-precision 16-bit floating point
         VT_FLOAT32,       ///< Full-precision 32-bit floating point
+		VT_FLOAT64,       ///< double-precision 64-bit floating point
         VT_NUM_TYPES      ///< Helper value storing total number of types in the enumeration
     };
 

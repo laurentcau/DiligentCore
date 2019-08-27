@@ -29,6 +29,7 @@
 #include "../../../Primitives/interface/FileStream.h"
 #include "../../../Primitives/interface/FlagEnum.h"
 #include "DeviceObject.h"
+#include <functional>
 
 namespace Diligent
 {
@@ -94,6 +95,23 @@ struct ShaderMacro
         Definition( _Def )
     {}
 };
+
+typedef std::function<bool(const std::string&, size_t, size_t)> TCBReflectionCallback; // args: constant buffer name, memory size, number of variables
+typedef std::function<void(const std::string&, const std::string&, VALUE_TYPE, size_t, size_t, size_t, size_t)> TCBVarReflectionCallback; // args: constant buffer name, variable name, type, number of elements, number of columns, number of rows, start offset
+typedef std::function<void(const std::string&, Diligent::RESOURCE_DIMENSION)> TTextureCallback; // args: texture name, dimension
+
+
+struct TShaderReflectionCallbacks 
+{	// optional callbacks to retrieve constant buffer layout
+	// CBReflection is call each time a constant buffer is discovered
+	// CBVarReflection is call each time a variable is discovered
+	TCBReflectionCallback CBReflectionCallback;
+	TCBVarReflectionCallback CBVarReflectionCallback;
+
+	// optional callbacks to retrieve texture informations
+	TTextureCallback TextureCallback;
+};
+
 
 /// Shader creation attributes
 struct ShaderCreateInfo
@@ -216,6 +234,8 @@ struct ShaderCreateInfo
     /// output message. The second one is the full shader source code including definitions added
     /// by the engine. Data blob object must be released by the client.
     IDataBlob** ppCompilerOutput = nullptr;
+
+	TShaderReflectionCallbacks ReflectionCallbacks;
 };
 
 /// Describes shader resource type
