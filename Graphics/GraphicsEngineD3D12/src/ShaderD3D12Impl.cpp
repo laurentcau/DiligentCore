@@ -106,7 +106,8 @@ ShaderD3D12Impl::ShaderD3D12Impl(IReferenceCounters*     pRefCounters,
             m_pShaderByteCode,
             m_Desc,
             ShaderCI.UseCombinedTextureSamplers ? ShaderCI.CombinedSamplerSuffix : nullptr,
-            pRenderDeviceD3D12->GetDxCompiler() //
+            pRenderDeviceD3D12->GetDxCompiler(),
+			ShaderCI.ReflectionCallbacks //
         };
     m_pShaderResources.reset(pResources, STDDeleterRawMem<ShaderResourcesD3D12>(Allocator));
 }

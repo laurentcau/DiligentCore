@@ -44,6 +44,7 @@ const Char* GetValueTypeString(VALUE_TYPE Val)
         // clang-format off
 #define INIT_VALUE_TYPE_STR( ValType ) ValueTypeStrings[ValType] = #ValType
         INIT_VALUE_TYPE_STR( VT_UNDEFINED );
+		INIT_VALUE_TYPE_STR( VT_BOOL );
         INIT_VALUE_TYPE_STR( VT_INT8    );
         INIT_VALUE_TYPE_STR( VT_INT16   );
         INIT_VALUE_TYPE_STR( VT_INT32   );
@@ -52,10 +53,10 @@ const Char* GetValueTypeString(VALUE_TYPE Val)
         INIT_VALUE_TYPE_STR( VT_UINT32  );
         INIT_VALUE_TYPE_STR( VT_FLOAT16 );
         INIT_VALUE_TYPE_STR( VT_FLOAT32 );
+		INIT_VALUE_TYPE_STR( VT_FLOAT64 ); 
 #undef  INIT_VALUE_TYPE_STR
         // clang-format on
-        static_assert(VT_NUM_TYPES == VT_FLOAT32 + 1, "Not all value type strings initialized.");
-        bIsInit = true;
+        static_assert(VT_NUM_TYPES == VT_FLOAT64 + 1, "Not all value type strings initialized.");        bIsInit = true;
     }
 
     if (Val >= VT_UNDEFINED && Val < VT_NUM_TYPES)

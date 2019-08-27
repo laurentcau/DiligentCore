@@ -43,7 +43,8 @@ public:
     ShaderResourcesD3D11(class RenderDeviceD3D11Impl* pDeviceD3D11Impl,
                          ID3DBlob*                    pShaderBytecode,
                          const ShaderDesc&            ShdrDesc,
-                         const char*                  CombinedSamplerSuffix);
+                         const char*                  CombinedSamplerSuffix,
+						 const TShaderReflectionCallbacks& ShaderReflectionCallbacks);
     ~ShaderResourcesD3D11();
 
     // clang-format off

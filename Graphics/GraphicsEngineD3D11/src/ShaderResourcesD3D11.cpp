@@ -39,7 +39,8 @@ namespace Diligent
 ShaderResourcesD3D11::ShaderResourcesD3D11(RenderDeviceD3D11Impl* pDeviceD3D11Impl,
                                            ID3DBlob*              pShaderBytecode,
                                            const ShaderDesc&      ShdrDesc,
-                                           const char*            CombinedSamplerSuffix) :
+                                           const char*            CombinedSamplerSuffix,
+										   const TShaderReflectionCallbacks& ShaderReflectionCallbacks) :
     ShaderResources{ShdrDesc.ShaderType}
 {
     class NewResourceHandler
@@ -114,11 +115,12 @@ ShaderResourcesD3D11::ShaderResourcesD3D11(RenderDeviceD3D11Impl* pDeviceD3D11Im
     CHECK_D3D_RESULT_THROW(hr, "Failed to get the shader reflection");
 
 
-    Initialize<D3D11_SHADER_DESC, D3D11_SHADER_INPUT_BIND_DESC>(
-        static_cast<ID3D11ShaderReflection*>(pShaderReflection),
+	Initialize<D3D11_SHADER_DESC, D3D11_SHADER_INPUT_BIND_DESC, D3D11_SHADER_BUFFER_DESC, D3D11_SHADER_VARIABLE_DESC, D3D11_SHADER_TYPE_DESC, ID3D11ShaderReflection>(
+       static_cast<ID3D11ShaderReflection*>(pShaderReflection),
         NewResourceHandler{pDeviceD3D11Impl, ShdrDesc, CombinedSamplerSuffix, *this},
         ShdrDesc.Name,
-        CombinedSamplerSuffix);
+        CombinedSamplerSuffix, 
+		ShaderReflectionCallbacks);
 }
 
 
