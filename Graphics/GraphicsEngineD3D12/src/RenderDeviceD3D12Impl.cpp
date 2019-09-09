@@ -32,7 +32,9 @@
 #include "ShaderResourceBindingD3D12Impl.h"
 #include "DeviceContextD3D12Impl.h"
 #include "FenceD3D12Impl.h"
+#include "QueryD3D12Impl.h"
 #include "EngineMemory.h"
+#include "d3dx12_win.h"
 
 namespace Diligent
 {
@@ -80,7 +82,8 @@ RenderDeviceD3D12Impl :: RenderDeviceD3D12Impl(IReferenceCounters*           pRe
             sizeof(SamplerD3D12Impl),
             sizeof(PipelineStateD3D12Impl),
             sizeof(ShaderResourceBindingD3D12Impl),
-            sizeof(FenceD3D12Impl)
+            sizeof(FenceD3D12Impl),
+			sizeof(QueryD3D12Impl)
         }
     },
     m_pd3d12Device  {pd3d12Device},
@@ -135,7 +138,16 @@ RenderDeviceD3D12Impl :: RenderDeviceD3D12Impl(IReferenceCounters*           pRe
     // so bindless resources are always available.
     // https://docs.microsoft.com/en-us/windows/win32/direct3d12/hardware-feature-levels#feature-level-support
     m_DeviceCaps.bBindlessSupported = True;
+
+	m_MaxframeCount = EngineCI.MaxFrameCount;
+	static_assert(std::tuple_size<decltype(m_QueryData)>::value == _countof(EngineCI.MaxQueryCountPerFrame), "");
+	for (int i = 0; i < m_QueryData.size(); ++i)
+		m_QueryData[i].m_QueryMaxCount = EngineCI.MaxQueryCountPerFrame[i];
+	CreateQueryHeaps();
+
 }
+
+
 
 RenderDeviceD3D12Impl::~RenderDeviceD3D12Impl()
 {
@@ -464,6 +476,52 @@ DescriptorHeapAllocation RenderDeviceD3D12Impl :: AllocateGPUDescriptors(D3D12_D
 {
     VERIFY(Type >= D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV && Type <= D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER, "Invalid heap type");
     return m_GPUDescriptorHeaps[Type].Allocate(Count);
+}
+
+void RenderDeviceD3D12Impl::CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)
+{
+	CreateDeviceObject("Query", Desc, ppQuery,
+		[&]()
+		{
+			QueryD3D12Impl* pQueryD3D12(NEW_RC_OBJ(m_QueryAllocator, "QueryD3D12Impl instance", QueryD3D12Impl)
+				(this, Desc));
+			pQueryD3D12->QueryInterface(IID_Query, reinterpret_cast<IObject**>(ppQuery));
+			OnCreateDeviceObject(pQueryD3D12);
+		}
+	);
+}
+
+void RenderDeviceD3D12Impl::CreateQueryHeaps()
+{
+	const UINT maxFrameCount = 2;
+
+	for (int i = 0; i < m_QueryData.size(); ++i)
+	{
+		if (m_QueryData[i].m_QueryMaxCount != 0)
+		{
+			const UINT resultCount = m_QueryData[i].m_QueryMaxCount * (maxFrameCount + 1);
+			const UINT resultBufferSize = resultCount * sizeof(UINT64);
+
+			D3D12_QUERY_HEAP_DESC timestampHeapDesc = {};
+			timestampHeapDesc.Type = i == D3D12_QUERY_TYPE_TIMESTAMP ? D3D12_QUERY_HEAP_TYPE_TIMESTAMP : D3D12_QUERY_HEAP_TYPE_OCCLUSION;
+			timestampHeapDesc.Count = resultCount;
+
+			CD3DX12_HEAP_PROPERTIES heapProp(D3D12_HEAP_TYPE_READBACK);
+			CD3DX12_RESOURCE_DESC resDesc = CD3DX12_RESOURCE_DESC::Buffer(resultBufferSize);
+
+			m_pd3d12Device->CreateCommittedResource(
+				&heapProp,
+				D3D12_HEAP_FLAG_NONE,
+				&resDesc,
+				D3D12_RESOURCE_STATE_COPY_DEST,
+				nullptr,
+				IID_PPV_ARGS(&m_QueryData[i].m_QueryResultBuffers)
+			);
+
+			m_pd3d12Device->CreateQueryHeap(&timestampHeapDesc, IID_PPV_ARGS(&m_QueryData[i].m_QueryHeap));
+		}
+	}
+
 }
 
 }

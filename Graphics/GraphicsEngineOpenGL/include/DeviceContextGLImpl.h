@@ -158,6 +158,10 @@ public:
 
     virtual void Flush()override final;
 
+	virtual void BeginQuery(IQuery* pQuery)override final;
+
+	virtual void EndQuery(IQuery* pQuery)override final;
+
     virtual bool UpdateCurrentGLContext()override final;
 
     void BindProgramResources(Uint32& NewMemoryBarriers, IShaderResourceBinding* pResBinding);

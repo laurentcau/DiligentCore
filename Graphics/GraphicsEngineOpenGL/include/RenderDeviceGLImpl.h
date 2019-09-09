@@ -80,6 +80,8 @@ public:
     
     virtual void CreateFence(const FenceDesc& Desc, IFence** ppFence)override final;
 
+	virtual void CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)override final;
+
     virtual void CreateTextureFromGLHandle(Uint32 GLHandle, const TextureDesc& TexDesc, RESOURCE_STATE InitialState, ITexture** ppTexture)override final;
 
     virtual void CreateBufferFromGLHandle(Uint32 GLHandle, const BufferDesc& BuffDesc, RESOURCE_STATE InitialState, IBuffer** ppBuffer)override final;

@@ -44,6 +44,7 @@
 #include "BufferViewGLImpl.h"
 #include "PipelineStateGLImpl.h"
 #include "FenceGLImpl.h"
+#include "QueryGLImpl.h"
 #include "ShaderResourceBindingGLImpl.h"
 
 using namespace std;
@@ -1135,4 +1136,15 @@ namespace Diligent
     {
 
     }
+
+	void DeviceContextGLImpl::BeginQuery(IQuery* pQuery)
+	{
+		static_cast<QueryGLImpl*>(pQuery)->Begin();
+	}
+
+	void DeviceContextGLImpl::EndQuery(IQuery* pQuery)
+	{
+		static_cast<QueryGLImpl*>(pQuery)->End();
+	}
+
 }

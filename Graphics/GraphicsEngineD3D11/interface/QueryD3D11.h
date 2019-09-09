@@ -1,4 +1,4 @@
-/*     Copyright 2019 Diligent Graphics LLC
+/*     Copyright 2019 Laurent Caumont
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,59 +21,26 @@
  *  of the possibility of such damages.
  */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
+/// \file
+/// Definition of the Diligent::IQueryD3D11 interface
 
-#ifndef WIN32_LEAN_AND_MEAN
-#   define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#endif
-#endif
+#include "../../GraphicsEngine/interface/Query.h"
 
-#ifndef NOMINMAX
-#   define NOMINMAX
-#endif
+namespace Diligent
+{
 
-#include "PlatformDefinitions.h"
+// {80EB9653-F7A0-4964-B004-E3B4CAF8EABB}
+static const GUID IID_QueryD3D11 =
+{ 0x80eb9653, 0xf7a0, 0x4964, { 0xb0, 0x4, 0xe3, 0xb4, 0xca, 0xf8, 0xea, 0xbb } };
 
-#include <vector>
-#include <array>
-#include <exception>
-#include <algorithm>
 
-#if PLATFORM_WIN32
-#   ifndef D3D11_VERSION
-#       define D3D11_VERSION 0
-#   endif
-#elif PLATFORM_UNIVERSAL_WINDOWS
-#   ifndef D3D11_VERSION
-#       define D3D11_VERSION 2
-#   endif
-#endif
+/// Interface to the Query object implemented in D3D11
+class IQueryD3D11 : public IQuery
+{
+public:
 
-#if D3D11_VERSION == 0
-#   include <d3d11.h>
-#elif D3D11_VERSION == 1
-#   include <d3d11_1.h>
-#elif D3D11_VERSION == 2
-#   include <d3d11_2.h>
-#elif D3D11_VERSION == 3
-#   include <d3d11_3.h>
-#elif D3D11_VERSION == 4
-#   include <d3d11_4.h>
-#endif
+};
 
-#include "EngineD3D11Defines.h"
-#include "Errors.h"
-#include "RefCntAutoPtr.h"
-#include "DebugUtilities.h"
-#include "D3DErrors.h"
-#include "RenderDeviceBase.h"
-#include "D3D11TypeConversions.h"
-#include "ValidatedCast.h"
-#include <atlcomcli.h>
+}

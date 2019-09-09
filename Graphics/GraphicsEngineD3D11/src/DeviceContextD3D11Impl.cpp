@@ -2258,5 +2258,16 @@ namespace Diligent
         VERIFY_SHADER( COMPUTE,  Compute,  C );
     }
 
+	void DeviceContextD3D11Impl::BeginQuery(IQuery* pQuery)
+	{
+		static_cast<QueryD3D11Impl*>(pQuery)->SetDeviceContext(m_pd3d11DeviceContext);
+		m_pd3d11DeviceContext->Begin(static_cast<QueryD3D11Impl*>(pQuery)->GetD3D11Query());
+	}
+
+	void DeviceContextD3D11Impl::EndQuery(IQuery* pQuery)
+	{
+		m_pd3d11DeviceContext->End(static_cast<QueryD3D11Impl*>(pQuery)->GetD3D11Query());
+	}
+
 #endif // VERIFY_CONTEXT_BINDINGS
 }

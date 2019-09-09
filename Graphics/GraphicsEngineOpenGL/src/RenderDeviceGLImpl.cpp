@@ -41,6 +41,7 @@
 #include "PipelineStateGLImpl.h"
 #include "ShaderResourceBindingGLImpl.h"
 #include "FenceGLImpl.h"
+#include "QueryGLImpl.h"
 #include "EngineMemory.h"
 #include "StringTools.h"
 
@@ -68,7 +69,8 @@ RenderDeviceGLImpl :: RenderDeviceGLImpl(IReferenceCounters*        pRefCounters
             sizeof(SamplerGLImpl),
             sizeof(PipelineStateGLImpl),
             sizeof(ShaderResourceBindingGLImpl),
-            sizeof(FenceGLImpl)
+            sizeof(FenceGLImpl),
+			sizeof(QueryGLImpl)
         }
     },
     // Device caps must be filled in before the constructor of Pipeline Cache is called!
@@ -782,6 +784,19 @@ void RenderDeviceGLImpl::OnDestroyBuffer(IBuffer *pBuffer)
 void RenderDeviceGLImpl::IdleGPU()
 {
     glFinish();
+}
+
+void RenderDeviceGLImpl::CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)
+{
+	CreateDeviceObject("Query", Desc, ppQuery,
+		[&]()
+		{
+			QueryGLImpl* pQueryGLImpl(NEW_RC_OBJ(m_QueryAllocator, "QueryGLImpl instance", QueryGLImpl)
+				(this, Desc));
+			pQueryGLImpl->QueryInterface(IID_Query, reinterpret_cast<IObject**>(ppQuery));
+			OnCreateDeviceObject(pQueryGLImpl);
+		}
+	);
 }
 
 }

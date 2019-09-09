@@ -9,6 +9,7 @@ set(INCLUDE
     include/DeviceContextGLImpl.h 
     include/FBOCache.h
     include/FenceGLImpl.h
+	include/QueryGLImpl.h
     include/GLContext.h
     include/GLContextState.h
     include/GLObjectWrapper.h
@@ -42,6 +43,7 @@ set(INTERFACE
     interface/DeviceContextGL.h
     interface/EngineFactoryOpenGL.h
     interface/FenceGL.h
+	interface/QueryGL.h
     interface/PipelineStateGL.h
     interface/RenderDeviceGL.h
     interface/SamplerGL.h
@@ -59,6 +61,7 @@ set(SOURCE
     src/EngineFactoryOpenGL.cpp
     src/FBOCache.cpp
     src/FenceGLImpl.cpp
+	src/QueryGLImpl.cpp
     src/GLContextState.cpp
     src/GLObjectWrapper.cpp
     src/GLProgramResourceCache.cpp

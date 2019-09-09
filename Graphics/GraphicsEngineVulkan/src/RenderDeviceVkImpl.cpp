@@ -32,6 +32,7 @@
 #include "ShaderResourceBindingVkImpl.h"
 #include "DeviceContextVkImpl.h"
 #include "FenceVkImpl.h"
+#include "QueryVkImpl.h"
 #include "EngineMemory.h"
 
 namespace Diligent
@@ -64,7 +65,8 @@ RenderDeviceVkImpl :: RenderDeviceVkImpl(IReferenceCounters*                    
             sizeof(SamplerVkImpl),
             sizeof(PipelineStateVkImpl),
             sizeof(ShaderResourceBindingVkImpl),
-            sizeof(FenceVkImpl)
+            sizeof(FenceVkImpl), 
+			sizeof(QueryVkImpl)
         }
     },
     m_VulkanInstance    {Instance                 },
@@ -534,6 +536,11 @@ void RenderDeviceVkImpl::CreateFence(const FenceDesc& Desc, IFence** ppFence)
             OnCreateDeviceObject( pFenceVk );
         }
     );
+}
+
+void RenderDeviceVkImpl::CreateQuery(const Diligent::QueryDesc &/*Desc*/, Diligent::IQuery **/*ppQuery*/)
+{
+	DEV_CHECK_ERR(false, "not implemented yet");
 }
 
 }

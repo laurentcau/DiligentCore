@@ -13,6 +13,7 @@ set(INCLUDE
     include/EngineFactoryBase.h
     include/EngineMemory.h
     include/FenceBase.h
+	include/QueryBase.h
     include/pch.h
     include/PipelineStateBase.h
     include/RenderDeviceBase.h
@@ -40,6 +41,7 @@ set(INTERFACE
     interface/DeviceObject.h
     interface/EngineFactory.h
     interface/Fence.h
+	interface/Query.h
     interface/GraphicsTypes.h
     interface/InputLayout.h
     interface/MapHelper.h

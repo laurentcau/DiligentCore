@@ -167,6 +167,10 @@ public:
 
     virtual void Flush()override final;
 
+	virtual void BeginQuery(IQuery* pQuery)override final;
+
+	virtual void EndQuery(IQuery* pQuery)override final;
+
     // Transitions texture subresources from OldState to NewState, and optionally updates
     // internal texture state.
     // If OldState == RESOURCE_STATE_UNKNOWN, internal texture state is used as old state.

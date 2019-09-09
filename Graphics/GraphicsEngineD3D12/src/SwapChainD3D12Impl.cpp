@@ -131,6 +131,8 @@ void SwapChainD3D12Impl::Present(Uint32 SyncInterval)
     auto* pBackBuffer = ValidatedCast<TextureD3D12Impl>(GetCurrentBackBufferRTV()->GetTexture());
     CmdCtx.TransitionResource(pBackBuffer, RESOURCE_STATE_PRESENT);
 
+	pImmediateCtxD3D12->ResolveQueries();
+
     pImmediateCtxD3D12->Flush();
 
     auto hr = m_pSwapChain->Present( SyncInterval, 0 );

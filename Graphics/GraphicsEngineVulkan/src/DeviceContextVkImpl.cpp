@@ -2252,4 +2252,16 @@ namespace Diligent
             }
         }
     }
+
+	void DeviceContextVkImpl::BeginQuery(IQuery* pQuery)
+	{
+		// to do
+		LOG_ERROR_MESSAGE("Not implemented yet.");
+	}
+
+	void DeviceContextVkImpl::EndQuery(IQuery* pQuery)
+	{
+		LOG_ERROR_MESSAGE("Not implemented yet.");
+	}
+
 }

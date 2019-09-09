@@ -35,6 +35,7 @@
 #include "PipelineStateD3D11Impl.h"
 #include "ShaderResourceBindingD3D11Impl.h"
 #include "FenceD3D11Impl.h"
+#include "QueryD3D11Impl.h"
 #include "EngineMemory.h"
 
 namespace Diligent
@@ -62,7 +63,8 @@ RenderDeviceD3D11Impl :: RenderDeviceD3D11Impl(IReferenceCounters*          pRef
             sizeof(SamplerD3D11Impl),
             sizeof(PipelineStateD3D11Impl),
             sizeof(ShaderResourceBindingD3D11Impl),
-            sizeof(FenceD3D11Impl)
+            sizeof(FenceD3D11Impl),
+			sizeof(QueryD3D11Impl)
         }
     },
     m_EngineAttribs{EngineAttribs},
@@ -318,6 +320,18 @@ void RenderDeviceD3D11Impl::IdleGPU()
     {
         pImmediateCtx->WaitForIdle();
     }
+
+void RenderDeviceD3D11Impl::CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)
+{
+	CreateDeviceObject("Query", Desc, ppQuery,
+		[&]()
+		{
+			QueryD3D11Impl* pQueryD3D11(NEW_RC_OBJ(m_QueryAllocator, "QueryD3D11Impl instance", QueryD3D11Impl)
+				(this, Desc));
+			pQueryD3D11->QueryInterface(IID_Query, reinterpret_cast<IObject**>(ppQuery));
+			OnCreateDeviceObject(pQueryD3D11);
+		}
+	);
 }
 
 }

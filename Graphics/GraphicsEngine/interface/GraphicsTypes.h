@@ -1428,6 +1428,10 @@ namespace Diligent
             32    // D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER
         };
 
+		// max of Queries per frame for each query types (occlusion, binary_occlusion, timestamp)
+		Uint32 MaxQueryCountPerFrame[3] = { 0,0,0 };
+		Uint32 MaxFrameCount = 2;
+
         /// Number of commands to flush the command list. Only draw/dispatch commands count
         /// towards the limit. Command lists are only flushed when pipeline state is changed
         /// or when backbuffer is presented.

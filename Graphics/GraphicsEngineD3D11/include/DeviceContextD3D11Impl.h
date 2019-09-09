@@ -164,6 +164,10 @@ public:
 
     virtual void Flush()override final;
 
+	virtual void BeginQuery(IQuery* pQuery)override final;
+
+	virtual void EndQuery(IQuery* pQuery)override final;
+
     virtual ID3D11DeviceContext* GetD3D11DeviceContext()override final { return m_pd3d11DeviceContext; }
     
     void CommitRenderTargets();

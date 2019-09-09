@@ -1,4 +1,4 @@
-/*     Copyright 2019 Diligent Graphics LLC
+/*     Copyright 2019 Laurent Caumont
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,59 +21,27 @@
  *  of the possibility of such damages.
  */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
-
 #pragma once
 
-#include "targetver.h"
+/// \file
+/// Definition of the Diligent::IQueryGL interface
 
-#ifndef WIN32_LEAN_AND_MEAN
-#   define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#endif
-#endif
+#include "../../GraphicsEngine/interface/Query.h"
 
-#ifndef NOMINMAX
-#   define NOMINMAX
-#endif
+namespace Diligent
+{
 
-#include "PlatformDefinitions.h"
+// {F83DD855-5D7F-40F4-BEE5-62A09978912B}
+static constexpr INTERFACE_ID IID_QueryGL =
+{ 0xf83dd855, 0x5d7f, 0x40f4, { 0xbe, 0xe5, 0x62, 0xa0, 0x99, 0x78, 0x91, 0x2b } };
 
-#include <vector>
-#include <array>
-#include <exception>
-#include <algorithm>
 
-#if PLATFORM_WIN32
-#   ifndef D3D11_VERSION
-#       define D3D11_VERSION 0
-#   endif
-#elif PLATFORM_UNIVERSAL_WINDOWS
-#   ifndef D3D11_VERSION
-#       define D3D11_VERSION 2
-#   endif
-#endif
+/// Interface to the Query object implemented in GL
+class IQueryGL : public IQuery
+{
+public:
+    /// Returns OpenGL sync object
+    //virtual IGLQuery* GetGLQuery() = 0;
+};
 
-#if D3D11_VERSION == 0
-#   include <d3d11.h>
-#elif D3D11_VERSION == 1
-#   include <d3d11_1.h>
-#elif D3D11_VERSION == 2
-#   include <d3d11_2.h>
-#elif D3D11_VERSION == 3
-#   include <d3d11_3.h>
-#elif D3D11_VERSION == 4
-#   include <d3d11_4.h>
-#endif
-
-#include "EngineD3D11Defines.h"
-#include "Errors.h"
-#include "RefCntAutoPtr.h"
-#include "DebugUtilities.h"
-#include "D3DErrors.h"
-#include "RenderDeviceBase.h"
-#include "D3D11TypeConversions.h"
-#include "ValidatedCast.h"
-#include <atlcomcli.h>
+}

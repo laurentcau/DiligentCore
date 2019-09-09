@@ -162,6 +162,10 @@ public:
 
     virtual void Flush()override final;
 
+	virtual void BeginQuery(IQuery* pQuery)override final;
+
+	virtual void EndQuery(IQuery* pQuery)override final;
+
     virtual void TransitionTextureState(ITexture *pTexture, D3D12_RESOURCE_STATES State)override final;
 
     virtual void TransitionBufferState(IBuffer *pBuffer, D3D12_RESOURCE_STATES State)override final;
@@ -225,6 +229,8 @@ public:
 
     Int64 GetCurrentFrameNumber()const {return m_ContextFrameNumber; }
 
+
+
 private:
     void CommitD3D12IndexBuffer(GraphicsContext& GraphCtx, VALUE_TYPE IndexType);
     void CommitD3D12VertexBuffers(class GraphicsContext& GraphCtx);
@@ -243,6 +249,11 @@ private:
                                                       RESOURCE_STATE_TRANSITION_MODE TransitionMode,
                                                       RESOURCE_STATE                 RequiredState,
                                                       const char*                    OperationName);
+	
+	// add resolve query command in command list 
+	// and grab read-back data for the queries from a finished frame pDevice->GetMaxFrameCount() ago. 
+	void ResolveQueries();
+	void ForceResolveQueries();
 
     __forceinline void PrepareForDraw(GraphicsContext& GraphCtx, DRAW_FLAGS Flags);
 
@@ -315,6 +326,12 @@ private:
     FixedBlockMemoryAllocator m_CmdListAllocator;
 
     std::vector<std::pair<Uint64, RefCntAutoPtr<IFence> > > m_PendingFences;
+
+	std::vector<Uint64>	  m_queryData;
+	std::array < Atomics::AtomicInt64, 3>  m_queryCounter = { 0,0,0 }; // counter of queries for each types (occlusion, binary occlusion, timestamp) for the current frame 
+	Atomics::AtomicInt64 m_QueryInProgressCount = 0; //count number of BeginQuery-EndQuery to prevent the flush of the command list.
+	std::vector<std::vector<std::vector<RefCntAutoPtr<IQuery>>>> m_frameQueries; //store the list of Query for each frame 
+	Uint32 m_queryFrameID = 0;
 
     struct MappedTextureKey
     {

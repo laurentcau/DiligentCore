@@ -1,4 +1,4 @@
-/*     Copyright 2019 Diligent Graphics LLC
+/*     Copyright 2019 Laurent Caumont
  *  
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,33 +21,37 @@
  *  of the possibility of such damages.
  */
 
-// stdafx.h : include file for standard system include files,
-// or project specific include files that are used frequently, but
-// are changed infrequently
-//
+#include "pch.h"
+#include <atlbase.h>
 
-#pragma once
+#include "QueryD3D12Impl.h"
+#include "EngineMemory.h"
+#include "RenderDeviceD3D12Impl.h"
+namespace Diligent
+{
+    
+QueryD3D12Impl :: QueryD3D12Impl(IReferenceCounters*    pRefCounters,
+                                 RenderDeviceD3D12Impl* pDevice,
+                                 const QueryDesc&       Desc) : 
+    TQueryBase(pRefCounters, pDevice, Desc)
+{
+}
 
-#ifndef WIN32_LEAN_AND_MEAN
-#   define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#endif
+QueryD3D12Impl :: ~QueryD3D12Impl()
+{
+}
 
-#ifndef NOMINMAX
-#   define NOMINMAX
-#endif
+D3D12_QUERY_TYPE QueryD3D12Impl :: GetD3DType() const
+{
+	switch (m_Desc.Type)
+	{
+	case QUERY_TYPE_BINARY_OCCLUSION: return D3D12_QUERY_TYPE_BINARY_OCCLUSION;
+	case QUERY_TYPE_OCCLUSION: return D3D12_QUERY_TYPE_OCCLUSION;
+	case QUERY_TYPE_TIMESTAMP: return D3D12_QUERY_TYPE_TIMESTAMP;
+	}
+	return D3D12_QUERY_TYPE_OCCLUSION;
+}
 
 
-#include <vector>
-#include <set>
-#include <exception>
-#include <algorithm>
-#include <d3d12.h>
 
-#include "PlatformDefinitions.h"
-#include "Errors.h"
-#include "RefCntAutoPtr.h"
-#include "DebugUtilities.h"
-#include "D3DErrors.h"
-#include "RenderDeviceBase.h"
-#include "ValidatedCast.h"
-#include <atlcomcli.h>
+}

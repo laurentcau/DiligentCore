@@ -82,6 +82,8 @@ public:
 
     virtual void CreateFence(const FenceDesc& Desc, IFence** ppFence)override final;
 
+	virtual void CreateQuery(const Diligent::QueryDesc &Desc, Diligent::IQuery **ppQuery)override final;
+
     virtual VkDevice GetVkDevice()override final{ return m_LogicalVkDevice->GetVkDevice();}
     
     virtual void CreateTextureFromVulkanImage(VkImage vkImage, const TextureDesc& TexDesc, RESOURCE_STATE InitialState, ITexture** ppTexture)override final;

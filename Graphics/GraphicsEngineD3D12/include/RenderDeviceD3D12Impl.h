@@ -35,6 +35,7 @@
 #include "Atomics.h"
 #include "CommandQueueD3D12.h"
 #include "GenerateMips.h"
+#include <array>
 
 namespace Diligent
 {
@@ -69,6 +70,8 @@ public:
     virtual void CreateSampler(const SamplerDesc& SamplerDesc, ISampler** ppSampler)override final;
 
     virtual void CreateFence(const FenceDesc& Desc, IFence** ppFence)override final;
+
+	virtual void CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)override final;
 
     virtual ID3D12Device* GetD3D12Device()override final{return m_pd3d12Device;}
     
@@ -105,10 +108,15 @@ public:
     const GenerateMipsHelper& GetMipsGenerator()const {return m_MipsGenerator;}
 
     D3D_FEATURE_LEVEL GetD3DFeatureLevel()const;
+	Uint32 GetQueryMaxCount(D3D12_QUERY_TYPE i) { return m_QueryData[(int)i].m_QueryMaxCount; }
+	CComPtr<ID3D12QueryHeap> &GetQueryHeap(D3D12_QUERY_TYPE i) { return m_QueryData[(int)i].m_QueryHeap; }
+	CComPtr<ID3D12Resource> &GetQueryResultBuffers(D3D12_QUERY_TYPE i) { return m_QueryData[(int)i].m_QueryResultBuffers; }
+	Uint32 GetMaxFrameCount() { return m_MaxframeCount; }
 
 private:
     virtual void TestTextureFormat( TEXTURE_FORMAT TexFormat )override final;
     void FreeCommandContext(PooledCommandContext&& Ctx);
+	void CreateQueryHeaps();
 
     CComPtr<ID3D12Device> m_pd3d12Device;
 
@@ -118,6 +126,16 @@ private:
     GPUDescriptorHeap m_GPUDescriptorHeaps[2]; // D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV == 0
                                                // D3D12_DESCRIPTOR_HEAP_TYPE_SAMPLER	 == 1
 	
+	struct SQueryData
+	{
+		CComPtr<ID3D12QueryHeap> m_QueryHeap;
+		CComPtr<ID3D12Resource> m_QueryResultBuffers;
+		Uint32 m_QueryMaxCount;
+	};
+
+	std::array<SQueryData, 3> m_QueryData; // we need one per query heap type
+	Uint32 m_MaxframeCount = 0;
+
     CommandListManager m_CmdListManager;
 
     std::mutex m_ContextPoolMutex;

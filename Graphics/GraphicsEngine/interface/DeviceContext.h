@@ -47,6 +47,7 @@
 
 namespace Diligent
 {
+	class IQuery;
 
 // {DC92711B-A1BE-4319-B2BD-C662D1CC19E4}
 static constexpr INTERFACE_ID IID_DeviceContext =
@@ -986,6 +987,9 @@ public:
     ///             resources after flushing the context.
     virtual void Flush() = 0;
 
+	virtual void BeginQuery(IQuery* pQuery) = 0;
+
+	virtual void EndQuery(IQuery* pQuery) = 0;
 
     /// Updates the data in the buffer.
 

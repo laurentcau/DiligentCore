@@ -36,6 +36,7 @@
 #include "D3D12DynamicHeap.h"
 #include "CommandListD3D12Impl.h"
 #include "DXGITypeConversions.h"
+#include "QueryD3D12Impl.h"
 
 namespace Diligent
 {
@@ -169,8 +170,8 @@ namespace Diligent
         if (PipelineStateD3D12Impl::IsSameObject(m_pPipelineState, pPipelineStateD3D12))
             return;
 
-        // Never flush deferred context!
-        if (!m_bIsDeferred && m_State.NumCommands >= m_NumCommandsToFlush)
+        // Never flush deferred context! Should not be flush if a query is used
+        if (!m_bIsDeferred && m_State.NumCommands >= m_NumCommandsToFlush && !m_QueryInProgressCount)
         {
             Flush(true);
         }
@@ -1684,7 +1685,8 @@ namespace Diligent
     {
         VERIFY(!m_bIsDeferred, "Only immediate contexts can be idled");
         Flush();
-        m_pDevice.RawPtr<RenderDeviceD3D12Impl>()->IdleCommandQueue(m_CommandQueueId, true);
+		m_pDevice.RawPtr<RenderDeviceD3D12Impl>()->IdleGPU();
+		ForceResolveQueries();
     }
 
     void DeviceContextD3D12Impl::TransitionResourceStates(Uint32 BarrierCount, StateTransitionDesc* pResourceBarriers)
@@ -1758,4 +1760,105 @@ namespace Diligent
         auto& CmdCtx = GetCmdContext();
         return CmdCtx.GetCommandList();
     }
+
+	void DeviceContextD3D12Impl::BeginQuery(IQuery* pQuery)
+	{
+		RenderDeviceD3D12Impl* pDevice = m_pDevice.RawPtr<RenderDeviceD3D12Impl>();
+		QueryD3D12Impl* pD3D12Query = static_cast<QueryD3D12Impl*>(pQuery);
+		//DEV_CHECK_ERR(m_queryCounter < pDevice->GetQueryMaxCount(), "No anough space reserved for queries.Consider increasing QueryCount in EngineD3D12CreateInfo");
+		DEV_CHECK_ERR(pDevice->GetMaxFrameCount() != 0, "MaxFrameCount need to be set in EngineD3D12CreateInfo");
+		
+		m_frameQueries.resize(pDevice->GetMaxFrameCount() + 1);
+		D3D12_QUERY_TYPE d3dQueryType = pD3D12Query->GetD3DType();
+
+		pD3D12Query->Reset();
+
+		if (d3dQueryType != D3D12_QUERY_TYPE_TIMESTAMP)
+			GetD3D12CommandList()->BeginQuery(pDevice->GetQueryHeap(d3dQueryType), d3dQueryType, (UINT)m_queryCounter[d3dQueryType]);
+		pD3D12Query->SetSlot(m_queryCounter[d3dQueryType]);
+		Atomics::AtomicIncrement(m_queryCounter[d3dQueryType]);
+		m_frameQueries[m_queryFrameID].resize(3);
+#ifdef DEVELOPMENT
+		for (RefCntAutoPtr<Diligent::IQuery> q : m_frameQueries[m_queryFrameID][d3dQueryType])
+			DEV_CHECK_ERR(q.RawPtr() != pQuery, "IQuery should be use only once per frame.");
+#endif
+		m_frameQueries[m_queryFrameID][d3dQueryType].push_back(RefCntAutoPtr<Diligent::IQuery>(pQuery));
+
+		Atomics::AtomicIncrement(m_QueryInProgressCount);
+	}
+
+	void DeviceContextD3D12Impl::EndQuery(IQuery* pQuery)
+	{
+		QueryD3D12Impl* pD3D12Query = static_cast<QueryD3D12Impl*>(pQuery);
+		D3D12_QUERY_TYPE d3dQueryType = pD3D12Query->GetD3DType();
+		GetD3D12CommandList()->EndQuery(m_pDevice.RawPtr<RenderDeviceD3D12Impl>()->GetQueryHeap(d3dQueryType), d3dQueryType, (UINT)pD3D12Query->GetSlot());
+		Atomics::AtomicDecrement(m_QueryInProgressCount);
+	}
+
+	void DeviceContextD3D12Impl::ForceResolveQueries()
+	{
+		RenderDeviceD3D12Impl* pDevice = m_pDevice.RawPtr<RenderDeviceD3D12Impl>();
+		for (int i = 0; i < pDevice->GetMaxFrameCount() + 1; ++i)
+			ResolveQueries();
+	}
+
+	void DeviceContextD3D12Impl::ResolveQueries()
+	{
+		DEV_CHECK_ERR(m_QueryInProgressCount == 0, "ResolveQueries should not be call between BeginQuery and EndQuery");
+
+		// note: inspired from DirectX-Graphics-Samples\Samples\Desktop\D3D12Raytracing\src\D3D12RaytracingProceduralGeometry\util\PerformanceTimers.cpp
+		RenderDeviceD3D12Impl* pDevice = m_pDevice.RawPtr<RenderDeviceD3D12Impl>();
+		m_frameQueries.resize(pDevice->GetMaxFrameCount() + 1);
+		UINT readBackFrameID = (m_queryFrameID + 1) % (pDevice->GetMaxFrameCount() + 1);
+
+		// Resolve query for the current frame.
+		Uint32 accumQueries = 0;
+		for (size_t i = 0; i < 3; ++i)
+		{
+			D3D12_QUERY_TYPE queryType = (D3D12_QUERY_TYPE)i;
+			Uint32 queryMaxCount = pDevice->GetQueryMaxCount(queryType);
+
+			CComPtr<ID3D12Resource> &QueryResultBuffers = pDevice->GetQueryResultBuffers(queryType);
+
+			if (!m_frameQueries[m_queryFrameID].empty() && !m_frameQueries[m_queryFrameID][i].empty())
+			{
+				UINT64 resolveToBaseAddress = (m_queryFrameID * queryMaxCount) * sizeof(UINT64);
+				GetD3D12CommandList()->ResolveQueryData(pDevice->GetQueryHeap(queryType), queryType, 0, (UINT)m_queryCounter[i], QueryResultBuffers, resolveToBaseAddress);
+				m_queryCounter[i] = 0;
+			}
+
+			// Grab read-back data for the queries from a finished frame m_maxframeCount ago. 
+			if (!m_frameQueries[readBackFrameID].empty() && !m_frameQueries[readBackFrameID][i].empty())
+			{
+				SIZE_T readBackBaseOffset = readBackFrameID * queryMaxCount * sizeof(UINT64);
+				D3D12_RANGE dataRange =
+				{
+					readBackBaseOffset,
+					readBackBaseOffset + queryMaxCount * sizeof(UINT64),
+				};
+
+				m_queryData.resize(queryMaxCount);
+
+				UINT64* queryData;
+				QueryResultBuffers->Map(0, &dataRange, reinterpret_cast<void**>(&queryData));
+				memcpy(&m_queryData[0], queryData, sizeof(UINT64) * queryMaxCount);
+				QueryResultBuffers->Unmap(0, nullptr);
+
+				for (auto pQuery : m_frameQueries[readBackFrameID][i])
+				{
+					QueryD3D12Impl* pD3D12Query = pQuery.RawPtr<QueryD3D12Impl>();
+					pD3D12Query->SetValue(m_queryData[pD3D12Query->GetSlot()]);
+				}
+				m_frameQueries[readBackFrameID][i].clear();
+			}
+		}
+
+
+		m_queryFrameID = readBackFrameID;
+
+	}
+
+
+
+
 }
