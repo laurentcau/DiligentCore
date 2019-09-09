@@ -141,6 +141,9 @@ option(DILIGENT_NO_DIRECT3D12 "Disable Direct3D12 backend" OFF)
 option(DILIGENT_NO_OPENGL "Disable OpenGL/GLES backend" OFF)
 option(DILIGENT_NO_VULKAN "Disable Vulkan backend" OFF)
 option(DILIGENT_NO_METAL "Disable Metal backend" OFF)
+
+option(PROPAGATE_CURRENT_RELWITHDEBINFO_OPTIONS "Use current/default cmake options for RelWithDebInfo" OFF)
+
 if(${DILIGENT_NO_DIRECT3D11})
     set(D3D11_SUPPORTED FALSE CACHE INTERNAL "D3D11 backend is forcibly disabled")
 endif()
@@ -201,10 +204,14 @@ if(MSVC)
     set(MSVC_RELEASE_COMPILE_OPTIONS ${MSVC_ALL_RELEASE_COMPILE_OPTIONS} /Ot /Oi /Ox)
     # In MINSIZEREL mode set favor small code option (/Os)
     set(MSVC_MINSIZEREL_COMPILE_OPTIONS ${MSVC_ALL_RELEASE_COMPILE_OPTIONS} /Os)
-    set(MSVC_RELWITHDEBINFO_COMPILE_OPTIONS ${MSVC_ALL_RELEASE_COMPILE_OPTIONS} /Ot /Oi /Ob2 /Ox)
+
     target_compile_options(Diligent-BuildSettings INTERFACE "$<$<CONFIG:RELEASE>:${MSVC_RELEASE_COMPILE_OPTIONS}>")
     target_compile_options(Diligent-BuildSettings INTERFACE "$<$<CONFIG:MINSIZEREL>:${MSVC_MINSIZEREL_COMPILE_OPTIONS}>")
-    target_compile_options(Diligent-BuildSettings INTERFACE "$<$<CONFIG:RELWITHDEBINFO>:${MSVC_RELWITHDEBINFO_COMPILE_OPTIONS}>")
+	if (NOT PROPAGATE_CURRENT_RELWITHDEBINFO_OPTIONS)
+		set(MSVC_RELWITHDEBINFO_COMPILE_OPTIONS ${MSVC_ALL_RELEASE_COMPILE_OPTIONS} /Ot /Oi /Ob2 /Ox)
+		target_compile_options(Diligent-BuildSettings INTERFACE "$<$<CONFIG:RELWITHDEBINFO>:${MSVC_RELWITHDEBINFO_COMPILE_OPTIONS}>")
+	endif()
+		
     # !!!NOTE!!! For some reason above is the only form of generator expression that works
     # For instance, this way
     # target_compile_options(Diligent-BuildSettings INTERFACE "$<$<CONFIG:RELEASE>:/Ot>")
