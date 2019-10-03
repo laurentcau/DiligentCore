@@ -154,7 +154,9 @@ public:
             return pSrvCbvUavHeap != nullptr || pSamplerHeap != nullptr;
         }
     };
-    void SetDescriptorHeaps(ShaderDescriptorHeaps& Heaps);
+
+	void InvalidateHeaps();
+	void SetDescriptorHeaps( ShaderDescriptorHeaps& Heaps );
 
     void ExecuteIndirect(ID3D12CommandSignature* pCmdSignature, ID3D12Resource* pBuff, Uint64 ArgsOffset)
     {
@@ -507,6 +509,12 @@ inline GraphicsContext6& CommandContext::AsGraphicsContext6()
 inline ComputeContext& CommandContext::AsComputeContext()
 {
     return static_cast<ComputeContext&>(*this);
+}
+
+
+inline void CommandContext::InvalidateHeaps()
+{
+	m_BoundDescriptorHeaps = ShaderDescriptorHeaps();
 }
 
 inline void CommandContext::SetDescriptorHeaps(ShaderDescriptorHeaps& Heaps)
