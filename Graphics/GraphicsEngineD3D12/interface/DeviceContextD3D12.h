@@ -70,6 +70,8 @@ public:
     ///           calling IDeviceContext::InvalidateState() and then manually restore all required states via
     ///           appropriate Diligent API calls.
     virtual ID3D12GraphicsCommandList* GetD3D12CommandList() = 0;
+
+	virtual void InvalidateHeaps() = 0;
 };
 
 }

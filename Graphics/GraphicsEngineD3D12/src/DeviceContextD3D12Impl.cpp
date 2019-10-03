@@ -1858,6 +1858,11 @@ namespace Diligent
 
 	}
 
+	void DeviceContextD3D12Impl::InvalidateHeaps()
+	{
+		auto& CmdCtx = GetCmdContext();
+		CmdCtx.InvalidateHeaps();
+	}
 
 
 
