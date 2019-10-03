@@ -106,6 +106,8 @@ DILIGENT_BEGIN_INTERFACE(IDeviceContextD3D12, IDeviceContext)
 
     /// Unlocks the command queue that was previously locked by IDeviceContextD3D12::LockCommandQueue().
     VIRTUAL void METHOD(UnlockCommandQueue)(THIS) PURE;
+
+	virtual void InvalidateHeaps() = 0;
 };
 DILIGENT_END_INTERFACE
 

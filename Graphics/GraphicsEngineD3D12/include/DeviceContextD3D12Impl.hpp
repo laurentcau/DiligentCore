@@ -338,6 +338,9 @@ public:
 
     size_t GetNumCommandsInCtx() const { return m_State.NumCommands; }
 
+
+	void InvalidateHeaps() override final;
+
 private:
     void CommitD3D12IndexBuffer(GraphicsContext& GraphCtx, VALUE_TYPE IndexType);
     void CommitD3D12VertexBuffers(class GraphicsContext& GraphCtx);
