@@ -52,6 +52,9 @@ struct D3DShaderResourceCounters
 
 template <typename D3D_SHADER_DESC,
           typename D3D_SHADER_INPUT_BIND_DESC,
+          typename D3D_SHADER_BUFFER_DESC,
+          typename D3D_SHADER_VARIABLE_DESC,
+          typename D3D_SHADER_TYPE_DESC,
           typename TShaderReflection,
 
           typename THandleShaderDesc,
@@ -70,7 +73,9 @@ void LoadD3DShaderResources(ID3DBlob*           pShaderByteCode,
                             TOnNewBuffUAV       OnNewBuffUAV,
                             TOnNewBuffSRV       OnNewBuffSRV,
                             TOnNewSampler       OnNewSampler,
-                            TOnNewTexSRV        OnNewTexSRV)
+                            TOnNewTexSRV        OnNewTexSRV,
+                            const TShaderReflectionCallbacks& ShaderReflectionCallbacks
+		)
 {
     CComPtr<TShaderReflection> pShaderReflection;
 
@@ -189,7 +194,27 @@ void LoadD3DShaderResources(ID3DBlob*           pShaderByteCode,
             BindCount,
             BindingDesc.Type,
             BindingDesc.Dimension,
-            D3DShaderResourceAttribs::InvalidSamplerId);
+                D3DShaderResourceAttribs::InvalidSamplerId
+            );
+
+			if (BindingDesc.Type == D3D_SIT_TEXTURE && ShaderReflectionCallbacks.TextureCallback)
+			{
+				std::string txtName(BindingDesc.Name);
+				RESOURCE_DIMENSION dim = RESOURCE_DIM_UNDEFINED;
+				switch (BindingDesc.Dimension)
+				{
+				case D3D_SRV_DIMENSION_TEXTURE1D:dim = RESOURCE_DIM_TEX_1D; break;
+				case D3D_SRV_DIMENSION_TEXTURE1DARRAY:dim = RESOURCE_DIM_TEX_1D_ARRAY; break;
+				case D3D_SRV_DIMENSION_TEXTURE2D:dim = RESOURCE_DIM_TEX_2D; break;
+				case D3D_SRV_DIMENSION_TEXTURE2DARRAY:dim = RESOURCE_DIM_TEX_2D_ARRAY; break;
+				case D3D_SRV_DIMENSION_TEXTURE3D:dim = RESOURCE_DIM_TEX_3D; break;
+				case D3D_SRV_DIMENSION_TEXTURECUBE:dim = RESOURCE_DIM_TEX_CUBE; break;
+				case D3D_SRV_DIMENSION_TEXTURECUBEARRAY:dim = RESOURCE_DIM_TEX_CUBE_ARRAY; break;
+				default:
+					break;
+				}
+				ShaderReflectionCallbacks.TextureCallback(txtName, dim);
+			}
     }
 
     OnResourcesCounted(RC, ResourceNamesPoolSize);
@@ -301,6 +326,51 @@ void LoadD3DShaderResources(ID3DBlob*           pShaderByteCode,
     {
         OnNewTexSRV(Resources[TexSRVInd]);
     }
+
+		if (ShaderReflectionCallbacks.CBReflectionCallback)
+		{
+			for (UINT i = 0; i < shaderDesc.ConstantBuffers; i++)
+			{
+				auto pConstBuffer = pShaderReflection->GetConstantBufferByIndex(i);
+				D3D_SHADER_BUFFER_DESC buff_desc;
+				pConstBuffer->GetDesc(&buff_desc);
+				std::string BufferName(buff_desc.Name);
+                if (buff_desc.Type == D3D_CT_RESOURCE_BIND_INFO)
+                    continue;
+				bool bProcessCBLayout = ShaderReflectionCallbacks.CBReflectionCallback(BufferName, buff_desc.Size, buff_desc.Variables);
+				if (ShaderReflectionCallbacks.CBVarReflectionCallback && bProcessCBLayout)
+				{
+					for (UINT j = 0; j < buff_desc.Variables; j++)
+					{
+						auto pVariable = pConstBuffer->GetVariableByIndex(j);
+						D3D_SHADER_VARIABLE_DESC var_desc;
+						pVariable->GetDesc(&var_desc);
+
+						auto pType = pVariable->GetType();
+						D3D_SHADER_TYPE_DESC type_desc;
+						pType->GetDesc(&type_desc);
+
+						std::string VarName(var_desc.Name);
+
+						VALUE_TYPE type = VT_UNDEFINED;
+						switch (type_desc.Type)
+						{
+						case D3D_SVT_FLOAT: type = VT_FLOAT32; break;
+						case D3D_SVT_INT: type = VT_INT32; break;
+						case D3D_SVT_BOOL: type = VT_BOOL; break;
+						case D3D_SVT_DOUBLE: type = VT_FLOAT64; break;
+						default:
+							UNEXPECTED("Unexpected variable type ()"); //add missing type if needed
 }
 
+						ShaderReflectionCallbacks.CBVarReflectionCallback(BufferName, VarName, type, type_desc.Elements, type_desc.Columns, type_desc.Rows, var_desc.StartOffset);
+					}
+				}
+
+			}
+
+		}
+
+
+    }
 } // namespace Diligent
