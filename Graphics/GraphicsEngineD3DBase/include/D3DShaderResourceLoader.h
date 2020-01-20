@@ -324,6 +324,8 @@ namespace Diligent
 				D3D_SHADER_BUFFER_DESC buff_desc;
 				pConstBuffer->GetDesc(&buff_desc);
 				std::string BufferName(buff_desc.Name);
+                if (buff_desc.Type == D3D_CT_RESOURCE_BIND_INFO)
+                    continue;
 				bool bProcessCBLayout = ShaderReflectionCallbacks.CBReflectionCallback(BufferName, buff_desc.Size, buff_desc.Variables);
 				if (ShaderReflectionCallbacks.CBVarReflectionCallback && bProcessCBLayout)
 				{
