@@ -421,4 +421,9 @@ D3D12_RESOURCE_STATES BufferD3D12Impl::GetD3D12ResourceState() const
     return ResourceStateFlagsToD3D12ResourceStates(GetState());
 }
 
+D3D12_GPU_VIRTUAL_ADDRESS BufferD3D12Impl::GetGPUAddress(Uint32 ContextId, IDeviceContext* pContext)
+{
+	return GetGPUAddress(ContextId, ValidatedCast<DeviceContextD3D12Impl>(pContext));
+}
+
 } // namespace Diligent
