@@ -74,6 +74,10 @@ DILIGENT_BEGIN_INTERFACE(IBufferD3D12, IBuffer)
     /// If the state is unknown to the engine (Diligent::RESOURCE_STATE_UNKNOWN),
     /// returns D3D12_RESOURCE_STATE_COMMON (0).
     VIRTUAL D3D12_RESOURCE_STATES METHOD(GetD3D12ResourceState)(THIS) CONST PURE;
+
+    //to get dynamic buffer GPU address
+    virtual D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress(Uint32 ContextId, IDeviceContext* pContext) = 0;
+    virtual D3D12_CPU_DESCRIPTOR_HANDLE GetCBVHandle() const = 0;
 };
 DILIGENT_END_INTERFACE
 
