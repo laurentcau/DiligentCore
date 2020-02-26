@@ -110,6 +110,9 @@ public:
     }
 
     D3D12_CPU_DESCRIPTOR_HANDLE GetCBVHandle() { return m_CBVDescriptorAllocation.GetCpuHandle(); }
+    virtual D3D12_GPU_VIRTUAL_ADDRESS GetGPUAddress(Uint32 ContextId, IDeviceContext* pContext) override final;
+
+    D3D12_CPU_DESCRIPTOR_HANDLE GetCBVHandle() const override final {return m_CBVDescriptorAllocation.GetCpuHandle();}
 
 private:
     virtual void CreateViewInternal(const struct BufferViewDesc& ViewDesc, IBufferView** ppView, bool bIsDefaultView) override;
