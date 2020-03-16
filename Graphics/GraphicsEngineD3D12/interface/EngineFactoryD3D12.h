@@ -147,7 +147,7 @@ public:
 
     typedef IEngineFactoryD3D12* (*GetEngineFactoryD3D12Type)();
 
-    static bool LoadGraphicsEngineD3D12(GetEngineFactoryD3D12Type &GetFactoryFunc)
+    inline static bool LoadGraphicsEngineD3D12(GetEngineFactoryD3D12Type &GetFactoryFunc)
     {
         GetFactoryFunc = nullptr;
         std::string LibName = "GraphicsEngineD3D12_";
