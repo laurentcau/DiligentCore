@@ -110,7 +110,7 @@ public:
     {
         VERIFY(!m_pBuffer && !m_pMappedData && !m_pContext, "Object already mapped");
         Unmap();
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         auto &BuffDesc = pBuffer->GetDesc();
         VERIFY(sizeof(DataType) <= BuffDesc.uiSizeInBytes, "Data type size exceeds buffer size");
 #endif

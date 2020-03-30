@@ -69,7 +69,7 @@ ShaderResourceBindingVkImpl::ShaderResourceBindingVkImpl(IReferenceCounters* pRe
         const SHADER_RESOURCE_VARIABLE_TYPE VarTypes[] = {SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE, SHADER_RESOURCE_VARIABLE_TYPE_DYNAMIC};
         new (m_pShaderVarMgrs + s) ShaderVariableManagerVk(*this, SrcLayout, VarDataAllocator, VarTypes, _countof(VarTypes), m_ShaderResourceCache);
     }
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     m_ShaderResourceCache.DbgVerifyResourceInitialization();
 #endif
 

@@ -73,7 +73,7 @@ public:
 };
 
 
-#if defined(_DEBUG)
+#if defined(DE_DEBUG)
 // Check for SDK Layer support.
 inline bool SdkLayersAvailable()
 {

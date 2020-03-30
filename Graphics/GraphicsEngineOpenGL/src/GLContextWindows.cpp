@@ -192,7 +192,7 @@ namespace Diligent
 					    0, 0
 				    };
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
 				    attribs[5] |= WGL_CONTEXT_DEBUG_BIT_ARB;
 #endif 
 

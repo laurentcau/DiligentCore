@@ -121,7 +121,7 @@ public:
         SRVDimension       (static_cast<decltype(SRVDimension)>(_SRVDimension)),
         SamplerOrTexSRVId  (_SamplerId)
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         VERIFY(_BindPoint <= MaxBindPoint || _BindPoint == InvalidBindPoint, "Bind Point is out of allowed range");
         VERIFY(_BindCount <= MaxBindCount, "Bind Count is out of allowed range");
         VERIFY(_InputType    < (1 << ShaderInputTypeBits),   "Shader input type is out of expected range");

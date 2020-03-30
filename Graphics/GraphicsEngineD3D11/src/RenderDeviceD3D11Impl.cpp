@@ -320,6 +320,7 @@ void RenderDeviceD3D11Impl::IdleGPU()
     {
         pImmediateCtx->WaitForIdle();
     }
+}
 
 void RenderDeviceD3D11Impl::CreateQuery(const QueryDesc& Desc, IQuery** ppQuery)
 {

@@ -33,7 +33,7 @@
 #include "TextureBaseD3D11.h"
 #include "PipelineStateD3D11Impl.h"
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
 #   define VERIFY_CONTEXT_BINDINGS
 #endif
 

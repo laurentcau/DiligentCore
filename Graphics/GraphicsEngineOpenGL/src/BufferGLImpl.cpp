@@ -323,7 +323,7 @@ void BufferGLImpl::Unmap(GLContextState& CtxState)
 void BufferGLImpl::BufferMemoryBarrier( Uint32 RequiredBarriers, GLContextState &GLContextState )
 {
 #if GL_ARB_shader_image_load_store
-    #ifdef _DEBUG
+    #ifdef DE_DEBUG
     {
         constexpr Uint32 BufferBarriers =
             GL_VERTEX_ATTRIB_ARRAY_BARRIER_BIT  |

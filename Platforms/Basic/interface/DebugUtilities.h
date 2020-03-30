@@ -27,7 +27,13 @@
 #include "../../../Primitives/interface/Errors.h"
 #include "BasicPlatformDebug.h"
 
-#ifdef _DEBUG
+#ifndef DE_DEBUG
+#   ifdef _DEBUG
+#       define DE_DEBUG
+#   endif
+#endif
+
+#ifdef DE_DEBUG
 
 #include <typeinfo>
 
@@ -69,7 +75,7 @@ void CheckDynamicType( SrcType *pSrcPtr )
 
 #endif
 
-#if defined(_DEBUG)
+#if defined(DE_DEBUG)
 #   define DEV_CHECK_ERR VERIFY
 #elif defined(DEVELOPMENT)
 #   define DEV_CHECK_ERR CHECK_ERR

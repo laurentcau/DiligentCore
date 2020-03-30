@@ -45,7 +45,7 @@ namespace Diligent
 
     FixedBlockMemoryAllocator::~FixedBlockMemoryAllocator()
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         for (size_t p = 0; p < m_PagePool.size(); ++p)
         {
             VERIFY(!m_PagePool[p].HasAllocations(), "Memory leak detected: memory page has allocated block");

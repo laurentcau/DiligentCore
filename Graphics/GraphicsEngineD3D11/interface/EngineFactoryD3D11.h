@@ -155,7 +155,7 @@ public:
         LibName += "32";
 #endif
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         LibName += "d";
 #else
         LibName += "r";

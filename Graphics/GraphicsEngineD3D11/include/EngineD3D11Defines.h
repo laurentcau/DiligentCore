@@ -23,6 +23,6 @@
 
 #pragma once
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
 #   define VERIFY_SHADER_BINDINGS
 #endif

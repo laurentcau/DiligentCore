@@ -107,7 +107,7 @@ void GLPipelineResourceLayout::Initialize(GLProgramResources*                  P
     Uint32 ImageBindingSlots   = 0;
     Uint32 SSBOBindingSlots    = 0;
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     const Uint32 DbgAllowedTypeBits = GetAllowedTypeBits(AllowedVarTypes, NumAllowedTypes);
 #endif
     for(Uint32 prog = 0; prog < NumPrograms; ++prog)
@@ -494,7 +494,7 @@ Uint32 GLPipelineResourceLayout::GetNumVariables(SHADER_TYPE ShaderStage)const
                      VariableEndOffset.NumSamplers      - VariableStartOffset.NumSamplers + 
                      VariableEndOffset.NumImages        - VariableStartOffset.NumImages   +
                      VariableEndOffset.NumStorageBlocks - VariableStartOffset.NumStorageBlocks;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     {
         Uint32 DbgNumVars = 0;
         auto CountVar = [&](const GLVariableBase& Var)

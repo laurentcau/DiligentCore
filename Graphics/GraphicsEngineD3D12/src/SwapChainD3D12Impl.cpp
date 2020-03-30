@@ -69,8 +69,7 @@ void SwapChainD3D12Impl::InitBuffersAndViews()
     {
 		CComPtr<ID3D12Resource> pBackBuffer;
         auto hr = m_pSwapChain->GetBuffer(backbuff, __uuidof(pBackBuffer), reinterpret_cast<void**>( static_cast<ID3D12Resource**>(&pBackBuffer) ));
-        if(FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to get back buffer ", backbuff," from the swap chain");
+        CHECK_D3D_RESULT_THROW(hr, ("Failed to get back buffer ", backbuff, " from the swap chain"));
 
         hr = pBackBuffer->SetName(L"Main back buffer");
         VERIFY_EXPR(SUCCEEDED(hr));
@@ -136,7 +135,7 @@ void SwapChainD3D12Impl::Present(Uint32 SyncInterval)
     pImmediateCtxD3D12->Flush();
 
     auto hr = m_pSwapChain->Present( SyncInterval, 0 );
-    VERIFY(SUCCEEDED(hr), "Present failed");
+    CHECK_D3D_RESULT_THROW(hr, "Present failed");
 
     if (m_SwapChainDesc.IsPrimary)
     {

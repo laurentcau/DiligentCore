@@ -154,7 +154,7 @@ void ShaderResourceBindingD3D11Impl::InitializeStaticResources(const IPipelineSt
         }
 #endif
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         auto ShaderTypeInd = GetShaderTypeIndex(pShaderD3D11->GetDesc().ShaderType);
         auto ResourceLayoutInd = m_ResourceLayoutIndex[ShaderTypeInd];
         VERIFY_EXPR(ResourceLayoutInd == static_cast<Int8>(shader) );

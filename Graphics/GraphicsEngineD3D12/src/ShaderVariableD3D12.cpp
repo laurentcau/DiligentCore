@@ -58,7 +58,7 @@ ShaderVariableManagerD3D12::ShaderVariableManagerD3D12(IObject&                 
                                                        ShaderResourceCacheD3D12&              ResourceCache) : 
     m_Owner         {Owner},
     m_ResourceCache {ResourceCache}
-#ifdef _DEBUG
+#ifdef DE_DEBUG
   , m_DbgAllocator  {Allocator}
 #endif
 

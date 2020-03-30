@@ -69,7 +69,7 @@ ShaderVariableManagerVk::ShaderVariableManagerVk(IObject&                       
                                                  ShaderResourceCacheVk&                 ResourceCache) :
     m_Owner        {Owner        },
     m_ResourceCache{ResourceCache}
-#ifdef _DEBUG
+#ifdef DE_DEBUG
   , m_DbgAllocator {Allocator}
 #endif
 {

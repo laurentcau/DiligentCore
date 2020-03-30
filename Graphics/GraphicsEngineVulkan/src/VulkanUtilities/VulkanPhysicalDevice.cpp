@@ -110,7 +110,7 @@ namespace VulkanUtilities
         {
             if (QueueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT))
             {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                 const auto& Props = m_QueueFamilyProperties[FamilyInd];
                 // Queues supporting graphics and/or compute operations must report (1,1,1) 
                 // in minImageTransferGranularity, meaning that there are no additional restrictions 

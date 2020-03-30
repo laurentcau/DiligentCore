@@ -141,8 +141,7 @@ BufferD3D12Impl :: BufferD3D12Impl(IReferenceCounters*          pRefCounters,
         auto D3D12State = ResourceStateFlagsToD3D12ResourceStates(GetState());
         auto hr = pd3d12Device->CreateCommittedResource( &HeapProps, D3D12_HEAP_FLAG_NONE,
 		    &D3D12BuffDesc, D3D12State, nullptr, __uuidof(m_pd3d12Resource), reinterpret_cast<void**>(static_cast<ID3D12Resource**>(&m_pd3d12Resource)) );
-        if(FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to create D3D12 buffer");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create D3D12 buffer");
 
         if( *m_Desc.Name != 0)
             m_pd3d12Resource->SetName(WidenString(m_Desc.Name).c_str());
@@ -161,13 +160,12 @@ BufferD3D12Impl :: BufferD3D12Impl(IReferenceCounters*          pRefCounters,
             hr = pd3d12Device->CreateCommittedResource( &UploadHeapProps, D3D12_HEAP_FLAG_NONE,
 		                &D3D12BuffDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,  __uuidof(UploadBuffer), 
                         reinterpret_cast<void**>(static_cast<ID3D12Resource**>(&UploadBuffer)) );
-            if(FAILED(hr))
-                LOG_ERROR_AND_THROW("Failed to create uload buffer");
+            CHECK_D3D_RESULT_THROW(hr, "Failed to create uload buffer");
 
 	        void* DestAddress = nullptr;
 	        hr = UploadBuffer->Map(0, nullptr, &DestAddress);
-            if(FAILED(hr))
-                LOG_ERROR_AND_THROW("Failed to map uload buffer");
+            CHECK_D3D_RESULT_THROW(hr, "Failed to map uload buffer");
+
 	        memcpy(DestAddress, pBuffData->pData, pBuffData->DataSize);
 	        UploadBuffer->Unmap(0, nullptr);
 

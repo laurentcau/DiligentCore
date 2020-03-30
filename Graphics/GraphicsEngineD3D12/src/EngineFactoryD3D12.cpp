@@ -158,6 +158,14 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
 		    }
 	    }
 
+		CComPtr<ID3D12DeviceRemovedExtendedDataSettings> pDredSettings;
+		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&pDredSettings))))
+		{
+			// Turn on AutoBreadcrumbs and Page Fault reporting
+			pDredSettings->SetAutoBreadcrumbsEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
+			pDredSettings->SetPageFaultEnablement(D3D12_DRED_ENABLEMENT_FORCED_ON);
+		}
+
 	    CComPtr<IDXGIFactory4> factory;
         HRESULT hr = CreateDXGIFactory1(__uuidof(factory), reinterpret_cast<void**>(static_cast<IDXGIFactory4**>(&factory)) );
         CHECK_D3D_RESULT_THROW(hr, "Failed to create DXGI factory");
@@ -253,18 +261,18 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
 		        //NewFilter.DenyList.pIDList = DenyIds;
 
 		        hr = pInfoQueue->PushStorageFilter(&NewFilter);
-                VERIFY(SUCCEEDED(hr), "Failed to push storage filter");
+                CHECK_D3D_RESULT_THROW(hr, "Failed to push storage filter");
 
                 if (EngineCI.BreakOnCorruption)
                 {
                     hr = pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-                    VERIFY(SUCCEEDED(hr), "Failed to set break on corruption");
+                    CHECK_D3D_RESULT_THROW(hr, "Failed to set break on corruption");
                 }
 
                 if (EngineCI.BreakOnError)
                 {
                     hr = pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR,      true);
-                    VERIFY(SUCCEEDED(hr), "Failed to set break on error");
+                    CHECK_D3D_RESULT_THROW(hr, "Failed to set break on error");
                 }
             }
         }

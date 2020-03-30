@@ -259,7 +259,7 @@ PipelineStateVkImpl :: PipelineStateVkImpl(IReferenceCounters*      pRefCounters
         VkComputePipelineCreateInfo PipelineCI = {};
         PipelineCI.sType = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO;
         PipelineCI.pNext = nullptr;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         PipelineCI.flags = VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
 #endif  
         PipelineCI.basePipelineHandle = VK_NULL_HANDLE; // a pipeline to derive from
@@ -287,7 +287,7 @@ PipelineStateVkImpl :: PipelineStateVkImpl(IReferenceCounters*      pRefCounters
         VkGraphicsPipelineCreateInfo PipelineCI = {};
         PipelineCI.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         PipelineCI.pNext = nullptr;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         PipelineCI.flags = VK_PIPELINE_CREATE_DISABLE_OPTIMIZATION_BIT;
 #endif  
 
@@ -491,7 +491,7 @@ bool PipelineStateVkImpl::IsCompatibleWith(const IPipelineState *pPSO)const
 
     auto IsSamePipelineLayout = m_PipelineLayout.IsSameAs(pPSOVk->m_PipelineLayout);
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     {
         bool IsCompatibleShaders = true;
         if (m_NumShaders != pPSOVk->m_NumShaders)
@@ -573,7 +573,7 @@ void PipelineStateVkImpl::CommitAndTransitionShaderResources(IShaderResourceBind
         m_ShaderResourceLayouts[s].dvpVerifyBindings(ResourceCache);
     }
 #endif
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     ResourceCache.DbgVerifyDynamicBuffersCounter();
 #endif
 
@@ -681,7 +681,7 @@ void PipelineStateVkImpl::InitializeStaticSRBResources(ShaderResourceCacheVk& Re
         const auto& ShaderResourceLayouts = GetShaderResLayout(s);
         ShaderResourceLayouts.InitializeStaticResources(StaticResLayout, StaticResCache, ResourceCache);
     }
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     ResourceCache.DbgVerifyDynamicBuffersCounter();
 #endif
 }

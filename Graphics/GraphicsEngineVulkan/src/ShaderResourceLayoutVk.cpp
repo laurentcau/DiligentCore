@@ -216,7 +216,7 @@ void ShaderResourceLayoutVk::InitializeStaticResourceLayout(std::shared_ptr<cons
         }
     );
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     for (SHADER_RESOURCE_VARIABLE_TYPE VarType = SHADER_RESOURCE_VARIABLE_TYPE_STATIC; VarType < SHADER_RESOURCE_VARIABLE_TYPE_NUM_TYPES; VarType = static_cast<SHADER_RESOURCE_VARIABLE_TYPE>(VarType + 1))
     {
         VERIFY(CurrResInd[VarType] == m_NumResources[VarType], "Not all resources have been initialized, which will cause a crash when dtor is called");
@@ -225,7 +225,7 @@ void ShaderResourceLayoutVk::InitializeStaticResourceLayout(std::shared_ptr<cons
 
     StaticResourceCache.InitializeSets(GetRawAllocator(), 1, &StaticResCacheSize);
     InitializeResourceMemoryInCache(StaticResourceCache);
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     StaticResourceCache.DbgVerifyResourceInitialization();
 #endif
 }
@@ -357,7 +357,7 @@ void ShaderResourceLayoutVk::Initialize(IRenderDevice*                          
     VERIFY_EXPR(NumShaders <= MaxShadersInPipeline);
     std::array<std::array<Uint32, SHADER_RESOURCE_VARIABLE_TYPE_NUM_TYPES>, MaxShadersInPipeline> CurrResInd = {};
     std::array<Uint32, MaxShadersInPipeline> CurrImmutableSamplerInd = {};
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     std::unordered_map<Uint32, std::pair<Uint32, Uint32>> dbgBindings_CacheOffsets;
 #endif
 
@@ -404,7 +404,7 @@ void ShaderResourceLayoutVk::Initialize(IRenderDevice*                          
         VERIFY(DescriptorSet <= std::numeric_limits<decltype(VkResource::DescriptorSet)>::max(), "Descriptor set (", DescriptorSet, ") excceeds maximum representable value");
         VERIFY(Binding       <= std::numeric_limits<decltype(VkResource::Binding)>      ::max(), "Binding (",        Binding,       ") excceeds maximum representable value");
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         // Verify that bindings and cache offsets monotonically increase in every descriptor set
         auto Binding_OffsetIt = dbgBindings_CacheOffsets.find(DescriptorSet);
         if(Binding_OffsetIt != dbgBindings_CacheOffsets.end())
@@ -495,7 +495,7 @@ void ShaderResourceLayoutVk::Initialize(IRenderDevice*                          
         );
     }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     for (Uint32 s = 0; s < NumShaders; ++s)
     {
         auto& Layout = Layouts[s];
@@ -834,7 +834,7 @@ void ShaderResourceLayoutVk::VkResource::BindResource(IDeviceObject* pObj, Uint3
 
     auto& DstDescrSet = ResourceCache.GetDescriptorSet(DescriptorSet);
     auto vkDescrSet = DstDescrSet.GetVkDescriptorSet();
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     if (ResourceCache.DbgGetContentType() == ShaderResourceCacheVk::DbgCacheContentType::SRBResources)
     {
         if(VariableType == SHADER_RESOURCE_VARIABLE_TYPE_STATIC || VariableType == SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE)
@@ -999,7 +999,7 @@ bool ShaderResourceLayoutVk::dvpVerifyBindings(const ShaderResourceCacheVk& Reso
                     LOG_ERROR_MESSAGE("No resource is bound to ", GetShaderVariableTypeLiteralName(Res.GetVariableType()), " variable '", Res.SpirvAttribs.GetPrintName(ArrInd), "' in shader '", GetShaderName(), "'");
                     BindingsOK = false;
                 }
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                 auto vkDescSet = CachedDescrSet.GetVkDescriptorSet();
                 auto dbgCacheContentType = ResourceCache.DbgGetContentType();
                 if (dbgCacheContentType == ShaderResourceCacheVk::DbgCacheContentType::StaticShaderResources)
@@ -1042,7 +1042,7 @@ void ShaderResourceLayoutVk::CommitDynamicResources(const ShaderResourceCacheVk&
     VERIFY(NumDynamicResources != 0, "This shader resource layout does not contain dynamic resources");
     VERIFY_EXPR(vkDynamicDescriptorSet != VK_NULL_HANDLE);
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     static constexpr size_t ImgUpdateBatchSize          = 4;
     static constexpr size_t BuffUpdateBatchSize         = 2;
     static constexpr size_t TexelBuffUpdateBatchSize    = 2;
@@ -1066,7 +1066,7 @@ void ShaderResourceLayoutVk::CommitDynamicResources(const ShaderResourceCacheVk&
     auto BuffViewIt      = DescrBuffViewArr.begin();
     auto WriteDescrSetIt = WriteDescrSetArr.begin();
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     Int32 DynamicDescrSetIndex = -1;
 #endif
 
@@ -1074,7 +1074,7 @@ void ShaderResourceLayoutVk::CommitDynamicResources(const ShaderResourceCacheVk&
     {
         const auto& Res = GetResource(SHADER_RESOURCE_VARIABLE_TYPE_DYNAMIC, ResNum);
         VERIFY_EXPR(Res.GetVariableType() == SHADER_RESOURCE_VARIABLE_TYPE_DYNAMIC);
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         if(DynamicDescrSetIndex < 0)
             DynamicDescrSetIndex = Res.DescriptorSet;
         else

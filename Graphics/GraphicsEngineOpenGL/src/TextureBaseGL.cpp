@@ -433,7 +433,7 @@ void TextureBaseGL :: CopyData(DeviceContextGLImpl* pDeviceCtxGL,
         }
 
         auto* pRenderDeviceGL = ValidatedCast<RenderDeviceGLImpl>(GetDevice());
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         {
             auto& TexViewObjAllocator = pRenderDeviceGL->GetTexViewObjAllocator();
             VERIFY( &TexViewObjAllocator == &m_dbgTexViewObjAllocator, "Texture view allocator does not match allocator provided during texture initialization" );
@@ -498,7 +498,7 @@ void TextureBaseGL :: CopyData(DeviceContextGLImpl* pDeviceCtxGL,
 void TextureBaseGL::TextureMemoryBarrier( Uint32 RequiredBarriers, GLContextState &GLContextState )
 {
 #if GL_ARB_shader_image_load_store
-    #ifdef _DEBUG
+    #ifdef DE_DEBUG
     {
         constexpr Uint32 TextureBarriers =
             GL_TEXTURE_FETCH_BARRIER_BIT       |
@@ -517,7 +517,7 @@ void TextureBaseGL::TextureMemoryBarrier( Uint32 RequiredBarriers, GLContextStat
 
 void TextureBaseGL::SetDefaultGLParameters()
 {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     GLint BoundTex;
     GLint TextureBinding = 0;
     switch( m_BindTarget )

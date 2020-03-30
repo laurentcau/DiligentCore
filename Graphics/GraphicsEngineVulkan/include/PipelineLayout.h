@@ -96,7 +96,7 @@ public:
         Uint32                       DynamicOffsetCount      = 0;
         bool                         DynamicBuffersPresent   = false;
         bool                         DynamicDescriptorsBound = false;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         const PipelineLayout*        pDbgPipelineLayout = nullptr;
 #endif
         DescriptorSetBindInfo() : 
@@ -114,7 +114,7 @@ public:
             DynamicBuffersPresent   = false;
             DynamicDescriptorsBound = false;
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             // In release mode, do not clear vectors as this causes unnecessary work
             vkSets.clear();
             DynamicOffsets.clear();
@@ -224,7 +224,7 @@ __forceinline void PipelineLayout::BindDescriptorSetsWithDynamicOffsets(VulkanUt
     VERIFY(BindInfo.DynamicOffsetCount > 0, "This function should only be called for pipelines that contain dynamic descriptors");
 
     VERIFY_EXPR(BindInfo.pResourceCache != nullptr);
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     Uint32 TotalDynamicDescriptors = 0;
     for (SHADER_RESOURCE_VARIABLE_TYPE VarType = SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE; VarType <= SHADER_RESOURCE_VARIABLE_TYPE_DYNAMIC; VarType = static_cast<SHADER_RESOURCE_VARIABLE_TYPE>(VarType + 1))
     {

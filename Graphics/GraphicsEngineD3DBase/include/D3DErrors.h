@@ -31,6 +31,8 @@
 namespace Diligent
 {
 
+    void CheckDeviceRemoved(HRESULT hr);
+
 /// Helper class that provides description of a COM error
 class ComErrorDesc
 {
@@ -55,6 +57,8 @@ public:
                 m_Msg[nLen - 2] = 0;
             }
         }
+
+        CheckDeviceRemoved(hr);
     }
 
     const char* Get(){ return m_Msg; }

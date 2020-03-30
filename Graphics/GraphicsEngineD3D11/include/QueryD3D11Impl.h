@@ -50,7 +50,7 @@ public:
 
 	CComPtr<ID3D11Query> &GetD3D11Query() { return m_pDx11Query; }
 
-	QUERY_STATUS GetValue(Uint64& v);
+	QUERY_STATUS GetValue(Uint64& v) override;
 
 	void SetDeviceContext(CComPtr<ID3D11DeviceContext> context) { m_pd3d11Ctx = context; }
 

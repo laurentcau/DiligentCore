@@ -352,8 +352,16 @@ public:
         return m_pEngineFactory.RawPtr<IEngineFactory>();
     }
 
+
     void OnCreateDeviceObject(IDeviceObject* pNewObject)
     {
+        if (m_pOnCreateDeviceObject)
+            m_pOnCreateDeviceObject(pNewObject);
+    }
+
+    void SetOnCreateDeviceObjectCallback(const std::function<void(IDeviceObject*)>& fct) override final
+    {
+        m_pOnCreateDeviceObject = fct;
     }
 
     StateObjectsRegistry<SamplerDesc>& GetSamplerRegistry(){ return m_SamplersRegistry; }
@@ -423,6 +431,8 @@ protected:
     FixedBlockMemoryAllocator m_ResMappingAllocator;     ///< Allocator for resource mapping objects
     FixedBlockMemoryAllocator m_FenceAllocator;          ///< Allocator for fence objects
 	FixedBlockMemoryAllocator m_QueryAllocator;          ///< Allocator for Query objects
+
+    std::function<void(IDeviceObject*)> m_pOnCreateDeviceObject;
 };
 
 

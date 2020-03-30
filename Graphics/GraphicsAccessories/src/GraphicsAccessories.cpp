@@ -373,7 +373,7 @@ const TextureFormatAttribs& GetTextureFormatAttribs( TEXTURE_FORMAT Format )
 #undef  INIT_TEX_FORMAT_INFO
         static_assert(TEX_FORMAT_NUM_FORMATS == TEX_FORMAT_BC7_UNORM_SRGB + 1, "Not all texture formats initialized.");
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         for( Uint32 Fmt = TEX_FORMAT_UNKNOWN; Fmt < TEX_FORMAT_NUM_FORMATS; ++Fmt )
             VERIFY(FmtAttribs[Fmt].Format == static_cast<TEXTURE_FORMAT>(Fmt), "Uninitialized format");
 #endif

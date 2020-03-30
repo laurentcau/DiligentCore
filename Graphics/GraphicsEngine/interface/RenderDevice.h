@@ -218,6 +218,10 @@ public:
     /// \remark This method does not increment the reference counter of the returned interface,
     ///         so the application should not call Release().
     virtual IEngineFactory* GetEngineFactory() const = 0;
+
+
+    virtual void SetOnCreateDeviceObjectCallback(const std::function<void(IDeviceObject*)> &fct) = 0;
+
 };
 
 }

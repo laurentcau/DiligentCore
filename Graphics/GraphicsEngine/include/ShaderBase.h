@@ -49,7 +49,7 @@ inline Int32 GetShaderTypeIndex(SHADER_TYPE Type)
 
     Int32 ShaderIndex = PlatformMisc::GetLSB(Type);
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     switch( Type )
     {
         case SHADER_TYPE_UNKNOWN: VERIFY_EXPR(ShaderIndex == -1); break;

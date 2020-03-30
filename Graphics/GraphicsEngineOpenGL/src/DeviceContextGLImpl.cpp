@@ -470,7 +470,7 @@ namespace Diligent
                     m_BoundWritableTextures.push_back( pTextureGL );
                 }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                 // Check that the texure being bound has immutable storage
                 {
                     m_ContextState.BindTexture(-1, pTexViewGL->GetBindTarget(), pTexViewGL->GetHandle());

@@ -71,7 +71,7 @@ public:
     };
 
     ShaderResourceCacheVk(DbgCacheContentType dbgContentType)
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         : m_DbgContentType{dbgContentType}
 #endif
     {
@@ -173,7 +173,7 @@ public:
 
     Uint16& GetDynamicBuffersCounter(){return m_NumDynamicBuffers;}
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     // Only for debug purposes: indicates what types of resources are stored in the cache
     DbgCacheContentType DbgGetContentType()const{return m_DbgContentType;}
     void DbgVerifyResourceInitialization()const;
@@ -203,7 +203,7 @@ private:
     Uint16              m_NumDynamicBuffers = 0;
     Uint32              m_TotalResources    = 0;
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     // Only for debug purposes: indicates what types of resources are stored in the cache
     const DbgCacheContentType      m_DbgContentType;
     // Debug array that stores flags indicating if resources in the cache have been initialized
@@ -257,7 +257,7 @@ __forceinline Uint32 ShaderResourceCacheVk::GetDynamicBufferOffsets(Uint32      
             ++res;
         }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         for (; res < DescrSet.GetSize(); ++res)
         {
             const auto& Res = DescrSet.GetResource(res);

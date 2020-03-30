@@ -39,6 +39,14 @@
 namespace Diligent
 {
 
+    std::function<void(HRESULT hr)> g_pCheckDeviceRemoved;
+
+	void CheckDeviceRemoved(HRESULT hr)
+	{
+        if (g_pCheckDeviceRemoved)
+            g_pCheckDeviceRemoved(hr);
+	}
+
 D3D_FEATURE_LEVEL RenderDeviceD3D12Impl :: GetD3DFeatureLevel() const
 {
     D3D_FEATURE_LEVEL FeatureLevels[] = 
@@ -144,6 +152,171 @@ RenderDeviceD3D12Impl :: RenderDeviceD3D12Impl(IReferenceCounters*           pRe
 	for (int i = 0; i < m_QueryData.size(); ++i)
 		m_QueryData[i].m_QueryMaxCount = EngineCI.MaxQueryCountPerFrame[i];
 	CreateQueryHeaps();
+    
+    g_pCheckDeviceRemoved = [this](HRESULT hr)
+    {
+        if (hr == DXGI_ERROR_DEVICE_REMOVED)
+        {
+            CComPtr<ID3D12DeviceRemovedExtendedData> pDred;
+            hr = m_pd3d12Device->QueryInterface(IID_PPV_ARGS(&pDred));
+            if (!FAILED(hr))
+            {
+                D3D12_DRED_AUTO_BREADCRUMBS_OUTPUT DredAutoBreadcrumbsOutput;
+                D3D12_DRED_PAGE_FAULT_OUTPUT DredPageFaultOutput;
+                HRESULT hrBc = pDred->GetAutoBreadcrumbsOutput(&DredAutoBreadcrumbsOutput);
+                HRESULT hrFault = pDred->GetPageFaultAllocationOutput(&DredPageFaultOutput);
+                static const wchar_t* opNames[] = {
+                    L"SETMARKER",
+                    L"BEGINEVENT",
+                    L"ENDEVENT",
+                    L"DRAWINSTANCED",
+                    L"DRAWINDEXEDINSTANCED",
+                    L"EXECUTEINDIRECT",
+                    L"DISPATCH",
+                    L"COPYBUFFERREGION",
+                    L"COPYTEXTUREREGION",
+                    L"COPYRESOURCE",
+                    L"COPYTILES",
+                    L"RESOLVESUBRESOURCE",
+                    L"CLEARRENDERTARGETVIEW",
+                    L"CLEARUNORDEREDACCESSVIEW",
+                    L"CLEARDEPTHSTENCILVIEW",
+                    L"RESOURCEBARRIER",
+                    L"EXECUTEBUNDLE",
+                    L"PRESENT",
+                    L"RESOLVEQUERYDATA",
+                    L"BEGINSUBMISSION",
+                    L"ENDSUBMISSION",
+                    L"DECODEFRAME",
+                    L"PROCESSFRAMES",
+                    L"ATOMICCOPYBUFFERUINT",
+                    L"ATOMICCOPYBUFFERUINT64",
+                    L"RESOLVESUBRESOURCEREGION",
+                    L"WRITEBUFFERIMMEDIATE",
+                    L"DECODEFRAME1",
+                    L"SETPROTECTEDRESOURCESESSION",
+                    L"DECODEFRAME2",
+                    L"PROCESSFRAMES1",
+                    L"BUILDRAYTRACINGACCELERATIONSTRUCTURE",
+                    L"EMITRAYTRACINGACCELERATIONSTRUCTUREPOSTBUILDINFO",
+                    L"COPYRAYTRACINGACCELERATIONSTRUCTURE",
+                    L"DISPATCHRAYS",
+                    L"INITIALIZEMETACOMMAND",
+                    L"EXECUTEMETACOMMAND",
+                    L"ESTIMATEMOTION",
+                    L"RESOLVEMOTIONVECTORHEAP",
+                    L"SETPIPELINESTATE1",
+                    L"INITIALIZEEXTENSIONCOMMAND",
+                    L"EXECUTEEXTENSIONCOMMAND"
+                };
+
+                if (!FAILED(hrBc))
+                {
+                    const D3D12_AUTO_BREADCRUMB_NODE* pNode = DredAutoBreadcrumbsOutput.pHeadAutoBreadcrumbNode;
+                    int counter = 0;
+                    while (pNode)
+                    {
+                        std::wstringstream s;
+                        s << counter;
+                        s << L" CmdList:" << (pNode->pCommandListDebugNameW ? pNode->pCommandListDebugNameW : L"<>");
+                        s << L" CmdDebugName:" << (pNode->pCommandQueueDebugNameW ? pNode->pCommandQueueDebugNameW : L"<>");
+                        s << L" CmdOp:";
+                        for (UINT32 i = 0; i < pNode->BreadcrumbCount; ++i)
+                        {
+                            int op = pNode->pCommandHistory[i];
+                            if (op < _countof(opNames))
+                                s << opNames[op] << ", ";
+                        }
+
+                        s << "\n";
+                        OutputDebugString(s.str().c_str());
+                        pNode = pNode->pNext;
+                    }
+                }
+
+                if (!FAILED(hrFault))
+                {
+                    {
+                        std::wstringstream s;
+                        s << "PageFault:";
+                        s << "0x" << std::uppercase << std::setfill(L'0') << std::setw(16) << std::hex << DredPageFaultOutput.PageFaultVA;
+                        s << "\n";
+                        OutputDebugString(s.str().c_str());
+                    }
+
+                    static std::map<int, std::wstring> allocType =
+                    {
+                        {19,L"COMMAND_QUEUE"},
+                        {20,L"COMMAND_ALLOCATOR"},
+                        {21,L"PIPELINE_STATE"},
+                        {22,L"COMMAND_LIST"},
+                        {23,L"FENCE"},
+                        {24,L"DESCRIPTOR_HEAP"},
+                        {25,L"HEAP"},
+                        {27,L"QUERY_HEAP"},
+                        {28,L"COMMAND_SIGNATURE"},
+                        {29,L"PIPELINE_LIBRARY"},
+                        {30,L"VIDEO_DECODER"},
+                        {32,L"VIDEO_PROCESSOR"},
+                        {34,L"RESOURCE"},
+                        {35,L"PASS"},
+                        {36,L"CRYPTOSESSION"},
+                        {37,L"CRYPTOSESSIONPOLICY"},
+                        {38,L"PROTECTEDRESOURCESESSION"},
+                        {39,L"VIDEO_DECODER_HEAP"},
+                        {40,L"COMMAND_POOL"},
+                        {41,L"COMMAND_RECORDER"},
+                        {42,L"STATE_OBJECT"},
+                        {43,L"METACOMMAND"},
+                        {44,L"SCHEDULINGGROUP"},
+                        {45,L"VIDEO_MOTION_ESTIMATOR"},
+                        {46,L"VIDEO_MOTION_VECTOR_HEAP"},
+                        {47,L"VIDEO_EXTENSION_COMMAND"}
+                    };
+
+
+
+                    {
+                        OutputDebugString(L"RecentFreedAllocation:\n");
+                        const D3D12_DRED_ALLOCATION_NODE* pNode = DredPageFaultOutput.pHeadRecentFreedAllocationNode;
+                        int counter = 0;
+                        while (pNode)
+                        {
+                            std::wstringstream s;
+                            s << counter;
+                            s << L" AllocName:" << (pNode->ObjectNameW ? pNode->ObjectNameW : L"<>");
+                            auto it = allocType.find(pNode->AllocationType);
+                            if (it != allocType.end())
+                                s << L" AllocType:" << it->second;
+                            s << "\n";
+                            OutputDebugString(s.str().c_str());
+                            pNode = pNode->pNext;
+                        }
+                    }
+
+
+                    {
+                        OutputDebugString(L"ExistingAllocation:\n");
+                        const D3D12_DRED_ALLOCATION_NODE* pNode = DredPageFaultOutput.pHeadExistingAllocationNode;
+                        int counter = 0;
+                        while (pNode)
+                        {
+                            std::wstringstream s;
+                            s << counter;
+                            s << L" AllocName:" << pNode->ObjectNameW ? pNode->ObjectNameW : L"<>";
+                            auto it = allocType.find(pNode->AllocationType);
+                            if (it != allocType.end())
+                                s << L" AllocType:" << it->second;
+                            s << "\n";
+                            OutputDebugString(s.str().c_str());
+                            pNode = pNode->pNext;
+                        }
+                    }
+                }
+                DebugBreak();
+            }
+		}
+    };
 
 }
 

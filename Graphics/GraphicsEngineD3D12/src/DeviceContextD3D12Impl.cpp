@@ -601,7 +601,7 @@ namespace Diligent
         if (pView != nullptr)
         {
             pViewD3D12 = ValidatedCast<ITextureViewD3D12>(pView);
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             const auto& ViewDesc = pViewD3D12->GetDesc();
             VERIFY( ViewDesc.ViewType == TEXTURE_VIEW_DEPTH_STENCIL, "Incorrect view type: depth stencil is expected" );
 #endif
@@ -638,7 +638,7 @@ namespace Diligent
         ITextureViewD3D12* pViewD3D12 = nullptr;
         if (pView != nullptr)
         {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             const auto& ViewDesc = pView->GetDesc();
             VERIFY( ViewDesc.ViewType == TEXTURE_VIEW_RENDER_TARGET, "Incorrect view type: render target is expected" );
 #endif
@@ -723,7 +723,7 @@ namespace Diligent
 
     void DeviceContextD3D12Impl::FinishFrame()
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         for(const auto& MappedBuffIt : m_DbgMappedBuffers)
         {
             const auto& BuffDesc = MappedBuffIt.first->GetDesc();
@@ -1328,7 +1328,7 @@ namespace Diligent
 
         Footpring.Footprint.RowPitch = static_cast<UINT>(SrcStride);
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         {
             const auto& FmtAttribs = GetTextureFormatAttribs(TexDesc.Format);
             const Uint32 RowCount = std::max((Footpring.Footprint.Height/FmtAttribs.BlockHeight), 1u);
@@ -1437,7 +1437,7 @@ namespace Diligent
         const auto& TexDesc = TextureD3D12.GetDesc();
         auto UploadSpace = AllocateTextureUploadSpace(TexDesc.Format, DstBox);
         auto UpdateRegionDepth = DstBox.MaxZ-DstBox.MinZ;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         {
             VERIFY(SrcStride >= UploadSpace.RowSize, "Source data stride (", SrcStride, ") is below the image row size (", UploadSpace.RowSize, ")");
             const Uint32 PlaneSize = SrcStride * UploadSpace.RowCount;
@@ -1798,7 +1798,7 @@ namespace Diligent
 	void DeviceContextD3D12Impl::ForceResolveQueries()
 	{
 		RenderDeviceD3D12Impl* pDevice = m_pDevice.RawPtr<RenderDeviceD3D12Impl>();
-		for (int i = 0; i < pDevice->GetMaxFrameCount() + 1; ++i)
+		for (Uint32 i = 0; i < pDevice->GetMaxFrameCount() + 1; ++i)
 			ResolveQueries();
 	}
 
@@ -1812,7 +1812,6 @@ namespace Diligent
 		UINT readBackFrameID = (m_queryFrameID + 1) % (pDevice->GetMaxFrameCount() + 1);
 
 		// Resolve query for the current frame.
-		Uint32 accumQueries = 0;
 		for (size_t i = 0; i < 3; ++i)
 		{
 			D3D12_QUERY_TYPE queryType = (D3D12_QUERY_TYPE)i;
@@ -1841,7 +1840,8 @@ namespace Diligent
 
 				UINT64* queryData;
 				QueryResultBuffers->Map(0, &dataRange, reinterpret_cast<void**>(&queryData));
-				memcpy(&m_queryData[0], queryData, sizeof(UINT64) * queryMaxCount);
+                if (queryData)
+				    memcpy(&m_queryData[0], queryData, sizeof(UINT64) * queryMaxCount);
 				QueryResultBuffers->Unmap(0, nullptr);
 
 				for (auto pQuery : m_frameQueries[readBackFrameID][i])

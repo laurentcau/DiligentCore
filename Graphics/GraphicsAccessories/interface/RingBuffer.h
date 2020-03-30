@@ -170,7 +170,7 @@ namespace Diligent
         // See http://diligentgraphics.com/diligent-engine/architecture/d3d12/managing-resource-lifetimes/
         void FinishCurrentFrame(Uint64 FenceValue)
         {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             if (!m_CompletedFrameHeads.empty())
                 VERIFY(FenceValue >= m_CompletedFrameHeads.back().FenceValue, "Current frame fence value (", FenceValue, ") is lower than the fence value of the previous frame (", m_CompletedFrameHeads.back().FenceValue, ")");
 #endif
@@ -198,7 +198,7 @@ namespace Diligent
 
             if (IsEmpty())
             {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                 VERIFY(m_CompletedFrameHeads.empty(), "Zero-size heads are not added to the list, and since the buffer is empty, there must be no heads in the list");
                 for(const auto& head : m_CompletedFrameHeads)
                     VERIFY(head.Size == 0, "Non zero-size head found");

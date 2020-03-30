@@ -45,7 +45,7 @@ void CommandListManager::CreateNewCommandList( ID3D12GraphicsCommandList** List,
 	RequestAllocator(Allocator);
     auto* pd3d12Device = m_DeviceD3D12Impl.GetD3D12Device();
 	auto hr = pd3d12Device->CreateCommandList(1, D3D12_COMMAND_LIST_TYPE_DIRECT, *Allocator, nullptr, __uuidof(*List), reinterpret_cast<void**>(List) );
-    VERIFY(SUCCEEDED(hr), "Failed to create command list");
+    CHECK_D3D_RESULT_THROW(hr, "Failed to create command list");
 	(*List)->SetName(L"CommandList");
 }
 
@@ -61,7 +61,7 @@ void CommandListManager::RequestAllocator(ID3D12CommandAllocator** ppAllocator)
 	{
 		*ppAllocator = m_FreeAllocators.back().Detach();
 		auto hr = (*ppAllocator)->Reset();
-        DEV_CHECK_ERR(SUCCEEDED(hr), "Failed to reset command allocator");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to reset command allocator");
 		m_FreeAllocators.pop_back();
 	}
 
@@ -70,7 +70,7 @@ void CommandListManager::RequestAllocator(ID3D12CommandAllocator** ppAllocator)
 	{
         auto* pd3d12Device = m_DeviceD3D12Impl.GetD3D12Device();
 		auto hr = pd3d12Device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, __uuidof(*ppAllocator), reinterpret_cast<void**>(ppAllocator));
-        VERIFY(SUCCEEDED(hr), "Failed to create command allocator");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create command allocator");
 		wchar_t AllocatorName[32];
         swprintf(AllocatorName, _countof(AllocatorName), L"Cmd list allocator %ld", Atomics::AtomicIncrement(m_NumAllocators)-1);
 		(*ppAllocator)->SetName(AllocatorName);

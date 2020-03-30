@@ -33,7 +33,7 @@ namespace Diligent
 
     void* DefaultRawMemoryAllocator::Allocate( size_t Size, const Char* dbgDescription, const char* dbgFileName, const  Int32 dbgLineNumber)
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         return new Uint8[Size+16]+16;
 #else
         return new Uint8[Size];
@@ -42,7 +42,7 @@ namespace Diligent
 
     void DefaultRawMemoryAllocator::Free(void *Ptr)
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         delete[] (reinterpret_cast<Uint8*>(Ptr)-16);
 #else
         delete[] reinterpret_cast<Uint8*>(Ptr);

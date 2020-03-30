@@ -94,7 +94,7 @@ namespace Diligent
         }
     }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     void ShaderResourceCacheD3D12::DbgVerifyBoundDynamicCBsCounter()const
     {
         Uint32 NumDynamicCBsBound = 0;

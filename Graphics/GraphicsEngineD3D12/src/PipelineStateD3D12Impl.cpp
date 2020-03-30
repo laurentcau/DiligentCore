@@ -170,14 +170,13 @@ PipelineStateD3D12Impl :: PipelineStateD3D12Impl(IReferenceCounters*      pRefCo
         d3d12PSODesc.CachedPSO.pCachedBlob = nullptr;
         d3d12PSODesc.CachedPSO.CachedBlobSizeInBytes = 0;
         
-        // The only valid bit is D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG, which can only be set on WARP devices.
+        // The only valid bit is D3D12_PIPELINE_STATE_FLAG_TOOLDE_DEBUG, which can only be set on WARP devices.
         d3d12PSODesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
         d3d12PSODesc.pRootSignature = m_RootSig.GetD3D12RootSignature();
 
         HRESULT hr = pd3d12Device->CreateComputePipelineState(&d3d12PSODesc, __uuidof(ID3D12PipelineState), reinterpret_cast<void**>( static_cast<ID3D12PipelineState**>(&m_pd3d12PSO)) );
-        if(FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to create pipeline state");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create pipeline state");
     }
     else
     {
@@ -250,12 +249,11 @@ PipelineStateD3D12Impl :: PipelineStateD3D12Impl(IReferenceCounters*      pRefCo
         d3d12PSODesc.CachedPSO.pCachedBlob = nullptr;
         d3d12PSODesc.CachedPSO.CachedBlobSizeInBytes = 0;
 
-        // The only valid bit is D3D12_PIPELINE_STATE_FLAG_TOOL_DEBUG, which can only be set on WARP devices.
+        // The only valid bit is D3D12_PIPELINE_STATE_FLAG_TOOLDE_DEBUG, which can only be set on WARP devices.
         d3d12PSODesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 
         HRESULT hr = pd3d12Device->CreateGraphicsPipelineState(&d3d12PSODesc, __uuidof(ID3D12PipelineState), reinterpret_cast<void**>( static_cast<ID3D12PipelineState**>(&m_pd3d12PSO)) );
-        if(FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to create pipeline state");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create pipeline state");
     }
 
     if (*m_Desc.Name != 0)
@@ -328,7 +326,7 @@ bool PipelineStateD3D12Impl::IsCompatibleWith(const IPipelineState* pPSO)const
 
     auto IsSameRootSignature = m_RootSig.IsSameAs(pPSOD3D12->m_RootSig);
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     {
         bool IsCompatibleShaders = true;
         if (m_NumShaders != pPSOD3D12->m_NumShaders)

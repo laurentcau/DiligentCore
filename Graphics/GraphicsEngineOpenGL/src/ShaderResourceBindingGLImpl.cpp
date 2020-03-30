@@ -78,7 +78,7 @@ IShaderResourceVariable* ShaderResourceBindingGLImpl::GetVariableByIndex(SHADER_
 
 const GLProgramResourceCache& ShaderResourceBindingGLImpl::GetResourceCache(PipelineStateGLImpl* pdbgPSO)
 {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     if (pdbgPSO->IsIncompatibleWith(GetPipelineState()))
     {
         LOG_ERROR("Shader resource binding is incompatible with the currently bound pipeline state.");

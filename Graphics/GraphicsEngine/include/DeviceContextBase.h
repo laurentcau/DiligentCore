@@ -283,7 +283,7 @@ protected:
 
     const bool m_bIsDeferred = false;
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     // std::unordered_map is unbelievably slow. Keeping track of mapped buffers 
     // in release builds is not feasible
     struct DbgMappedBufferInfo
@@ -677,7 +677,7 @@ inline void DeviceContextBase<BaseInterface,ImplementationTraits> :: ClearStateC
 {
     for(Uint32 stream=0; stream < m_NumVertexStreams; ++stream)
         m_VertexStreams[stream] = VertexStreamInfo<BufferImplType>{};
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     for(Uint32 stream=m_NumVertexStreams; stream < _countof(m_VertexStreams); ++stream)
     {
         VERIFY(m_VertexStreams[stream].pBuffer == nullptr, "Unexpected non-null buffer");
@@ -712,7 +712,7 @@ inline void DeviceContextBase<BaseInterface,ImplementationTraits> :: ResetRender
 {
     for (Uint32 rt = 0; rt < m_NumBoundRenderTargets; ++rt)
         m_pBoundRenderTargets[rt].Release();
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     for (Uint32 rt = m_NumBoundRenderTargets; rt < _countof(m_pBoundRenderTargets); ++rt)
     {
         VERIFY(m_pBoundRenderTargets[rt] == nullptr, "Non-null render target found");
@@ -769,7 +769,7 @@ inline void DeviceContextBase<BaseInterface,ImplementationTraits> ::
     
     const auto& BuffDesc = pBuffer->GetDesc();
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     VERIFY(m_DbgMappedBuffers.find(pBuffer) == m_DbgMappedBuffers.end(), "Buffer '", BuffDesc.Name, "' has already been mapped");
     m_DbgMappedBuffers[pBuffer] = DbgMappedBufferInfo{MapType};
 #endif
@@ -816,7 +816,7 @@ inline void DeviceContextBase<BaseInterface,ImplementationTraits> ::
             UnmapBuffer(IBuffer* pBuffer, MAP_TYPE MapType)
 {
     VERIFY(pBuffer, "pBuffer must not be null");
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     auto MappedBufferIt = m_DbgMappedBuffers.find(pBuffer);
     VERIFY(MappedBufferIt != m_DbgMappedBuffers.end(), "Buffer '", pBuffer->GetDesc().Name, "' has not been mapped.");
     VERIFY(MappedBufferIt->second.MapType == MapType, "MapType (", MapType, ") does not match the map type that was used to map the buffer ", MappedBufferIt->second.MapType);

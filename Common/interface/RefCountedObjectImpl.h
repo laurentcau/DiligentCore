@@ -216,7 +216,7 @@ private:
     {
         m_lNumStrongReferences = 0;
         m_lNumWeakReferences = 0;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         memset(m_ObjectWrapperBuffer, 0, sizeof(m_ObjectWrapperBuffer));
 #endif
     }
@@ -351,7 +351,7 @@ private:
         //                                      |       - Increment m_lNumStrongReferences
         //                                      |   5. Decrement m_lNumStrongReferences
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         Atomics::Long NumStrongRefs = m_lNumStrongReferences;
         VERIFY( NumStrongRefs == 0 || NumStrongRefs == 1, "Num strong references (", NumStrongRefs, ") is expected to be 0 or 1" );
 #endif
@@ -387,7 +387,7 @@ private:
             size_t ObjectWrapperBufferCopy[ObjectWrapperBufferSize];
             for(size_t i=0; i < ObjectWrapperBufferSize; ++i)
                 ObjectWrapperBufferCopy[i] = m_ObjectWrapperBuffer[i];
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             memset(m_ObjectWrapperBuffer, 0, sizeof(m_ObjectWrapperBuffer));
 #endif
             auto *pWrapper = reinterpret_cast<ObjectWrapperBase*>(ObjectWrapperBufferCopy);

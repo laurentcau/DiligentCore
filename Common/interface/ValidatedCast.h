@@ -28,7 +28,7 @@
 template<typename DstType, typename SrcType>
 DstType* ValidatedCast(SrcType* Ptr)
 {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     if(Ptr != nullptr)
     {
         CHECK_DYNAMIC_TYPE( DstType, Ptr );

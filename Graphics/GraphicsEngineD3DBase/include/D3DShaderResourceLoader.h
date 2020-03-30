@@ -125,7 +125,7 @@ namespace Diligent
                 Name.erase(OpenBracketPos, Name.length() - OpenBracketPos);
                 // Name == "g_tex2DDiffuse"
                 VERIFY_EXPR(Name.length() == OpenBracketPos);
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                 for (const auto& ExistingRes : Resources)
                 {
                     VERIFY(Name.compare(ExistingRes.Name) != 0, "Resource with the same name has already been enumerated. All array elements are expected to be enumerated one after another");

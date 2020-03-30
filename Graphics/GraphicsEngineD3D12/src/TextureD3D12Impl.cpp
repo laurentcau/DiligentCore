@@ -181,8 +181,7 @@ TextureD3D12Impl :: TextureD3D12Impl(IReferenceCounters*        pRefCounters,
         auto D3D12State = ResourceStateFlagsToD3D12ResourceStates(InitialState);
         auto hr = pd3d12Device->CreateCommittedResource( &HeapProps, D3D12_HEAP_FLAG_NONE,
 		    &Desc, D3D12State, pClearValue, __uuidof(m_pd3d12Resource), reinterpret_cast<void**>(static_cast<ID3D12Resource**>(&m_pd3d12Resource)) );
-        if (FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to create D3D12 texture");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create D3D12 texture");
 
         if (*m_Desc.Name != 0)
             m_pd3d12Resource->SetName(WidenString(m_Desc.Name).c_str());
@@ -220,8 +219,7 @@ TextureD3D12Impl :: TextureD3D12Impl(IReferenceCounters*        pRefCounters,
 	        hr = pd3d12Device->CreateCommittedResource( &UploadHeapProps, D3D12_HEAP_FLAG_NONE,
 		        &BufferDesc, D3D12_RESOURCE_STATE_GENERIC_READ,
 		        nullptr,  __uuidof(UploadBuffer), reinterpret_cast<void**>(static_cast<ID3D12Resource**>(&UploadBuffer)));
-            if(FAILED(hr))
-                LOG_ERROR_AND_THROW("Failed to create committed resource in an upload heap");
+            CHECK_D3D_RESULT_THROW(hr, "Failed to create committed resource in an upload heap");
 
             auto InitContext = pRenderDeviceD3D12->AllocateCommandContext();
 	        // copy data to the intermediate upload heap and then schedule a copy from the upload heap to the default texture
@@ -322,8 +320,8 @@ TextureD3D12Impl :: TextureD3D12Impl(IReferenceCounters*        pRefCounters,
         // https://docs.microsoft.com/en-us/windows/desktop/api/d3d12/nf-d3d12-id3d12resource-map
 	    auto hr = pd3d12Device->CreateCommittedResource( &StaginHeapProps, D3D12_HEAP_FLAG_NONE, &BufferDesc, D3D12State,
 		    nullptr,  __uuidof(m_pd3d12Resource), reinterpret_cast<void**>(static_cast<ID3D12Resource**>(&m_pd3d12Resource)));
-        if(FAILED(hr))
-            LOG_ERROR_AND_THROW("Failed to create staging buffer");
+        CHECK_D3D_RESULT_THROW(hr, "Failed to create staging buffer");
+
     }
     else
     {

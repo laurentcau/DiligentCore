@@ -38,6 +38,7 @@
 #include "CommandListD3D11Impl.h"
 #include "RenderDeviceD3D11Impl.h"
 #include "FenceD3D11Impl.h"
+#include "QueryD3D11Impl.h"
 
 namespace Diligent
 {

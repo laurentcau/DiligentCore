@@ -432,7 +432,7 @@ namespace Diligent
             }
         }
 #if 0
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         else
         {
             if ( m_pPipelineState->dbgContainsShaderResources() )
@@ -551,7 +551,7 @@ namespace Diligent
             }
         }
 #if 0
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         else
         {
             if ( m_pPipelineState->dbgContainsShaderResources() )
@@ -820,7 +820,7 @@ namespace Diligent
 
     void DeviceContextVkImpl::FinishFrame()
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         for(const auto& MappedBuffIt : m_DbgMappedBuffers)
         {
             const auto& BuffDesc = MappedBuffIt.first->GetDesc();
@@ -1615,7 +1615,7 @@ namespace Diligent
         // pages will be discarded
         VERIFY( (Allocation.AlignedOffset % BufferOffsetAlignment) == 0, "Allocation offset must be at least 32-bit algined");
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         {
             VERIFY(SrcStride >= CopyInfo.RowSize, "Source data stride (", SrcStride, ") is below the image row size (", CopyInfo.RowSize, ")");
             const Uint32 PlaneSize = SrcStride * CopyInfo.RowCount;

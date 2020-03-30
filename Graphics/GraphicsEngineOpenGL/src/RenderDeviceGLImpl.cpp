@@ -484,7 +484,7 @@ void RenderDeviceGLImpl::FlagSupportedTexFormats()
     FLAG_FORMAT(TEX_FORMAT_BC7_UNORM,                  bBPTC );
     FLAG_FORMAT(TEX_FORMAT_BC7_UNORM_SRGB,             bBPTC );
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     bool bGL43OrAbove = DeviceCaps.DevType == DeviceType::OpenGL &&  
                         (DeviceCaps.MajorVersion >= 5 || (DeviceCaps.MajorVersion == 4 && DeviceCaps.MinorVersion >= 3) );
 

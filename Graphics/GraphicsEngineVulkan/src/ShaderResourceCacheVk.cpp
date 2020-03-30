@@ -64,7 +64,7 @@ void ShaderResourceCacheVk::InitializeSets(IMemoryAllocator& MemAllocator, Uint3
         m_TotalResources += SetSizes[t];
     auto MemorySize = NumSets * sizeof(DescriptorSet) + m_TotalResources * sizeof(Resource);
     VERIFY_EXPR(MemorySize == GetRequiredMemorySize(NumSets, SetSizes));
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     m_DbgInitializedResources.resize(m_NumSets);
 #endif
     if (MemorySize > 0)
@@ -76,7 +76,7 @@ void ShaderResourceCacheVk::InitializeSets(IMemoryAllocator& MemAllocator, Uint3
         {
             new(&GetDescriptorSet(t)) DescriptorSet(SetSizes[t], SetSizes[t] > 0 ? pCurrResPtr : nullptr);
             pCurrResPtr += SetSizes[t];
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             m_DbgInitializedResources[t].resize(SetSizes[t]);
 #endif
         }
@@ -90,13 +90,13 @@ void ShaderResourceCacheVk::InitializeResources(Uint32 Set, Uint32 Offset, Uint3
     for (Uint32 res = 0; res < ArraySize; ++res)
     {
         new(&DescrSet.GetResource(Offset + res)) Resource{Type};
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         m_DbgInitializedResources[Set][Offset + res] = true;
 #endif
     }
 }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
 void ShaderResourceCacheVk::DbgVerifyResourceInitialization()const
 {
     for (const auto& SetFlags : m_DbgInitializedResources)
@@ -198,7 +198,7 @@ void ShaderResourceCacheVk::TransitionResources(DeviceContextVkImpl* pCtxVkImpl)
                         (Res.Type == SPIRVShaderResourceAttribs::ResourceType::RWStorageBuffer || 
                          Res.Type == SPIRVShaderResourceAttribs::ResourceType::StorageTexelBuffer) ?
                         RESOURCE_STATE_UNORDERED_ACCESS : RESOURCE_STATE_SHADER_RESOURCE;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                     const VkAccessFlags  RequiredAccessFlags = (RequiredState == RESOURCE_STATE_SHADER_RESOURCE) ? 
                         VK_ACCESS_SHADER_READ_BIT : (VK_ACCESS_SHADER_READ_BIT | VK_ACCESS_SHADER_WRITE_BIT);
                     VERIFY_EXPR( (ResourceStateFlagsToVkAccessFlags(RequiredState) & RequiredAccessFlags) == RequiredAccessFlags);

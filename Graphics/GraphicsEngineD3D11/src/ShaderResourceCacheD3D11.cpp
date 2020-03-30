@@ -89,7 +89,7 @@ namespace Diligent
                     (sizeof(CachedSampler)  + sizeof(ID3D11SamplerState*))        * SamplerCount + 
                     (sizeof(CachedResource) + sizeof(ID3D11UnorderedAccessView*)) * UAVCount );
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         m_pdbgMemoryAllocator = &MemAllocator;
 #endif
         if( BufferSize > 0 )

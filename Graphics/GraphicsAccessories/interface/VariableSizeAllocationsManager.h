@@ -103,14 +103,14 @@ namespace Diligent
             AddNewBlock(0, m_MaxSize);
             ResetCurrAlignment();
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             DbgVerifyList();
 #endif
         }
 
         ~VariableSizeAllocationsManager()
         {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             if( !m_FreeBlocksByOffset.empty() || !m_FreeBlocksBySize.empty() )
             {
                 VERIFY(m_FreeBlocksByOffset.size() == 1, "Single free block is expected");
@@ -225,7 +225,7 @@ namespace Diligent
                 }
             }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             DbgVerifyList();
 #endif
             return Allocation{Offset, AdjustedSize};
@@ -245,7 +245,7 @@ namespace Diligent
             // upper_bound() returns an iterator pointing to the first element in the 
             // container whose key is considered to go after k.
             auto NextBlockIt = m_FreeBlocksByOffset.upper_bound(Offset); 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             {
                 auto LowBnd = m_FreeBlocksByOffset.lower_bound(Offset); // First element whose offset is  >=
                 // Since zero-size allocations are not allowed, lower bound must always be equal to the upper bound
@@ -328,7 +328,7 @@ namespace Diligent
                 ResetCurrAlignment();
             }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
             DbgVerifyList();
 #endif
         }
@@ -339,7 +339,7 @@ namespace Diligent
         OffsetType GetFreeSize()const{return m_FreeSize;}
         OffsetType GetUsedSize()const{return m_MaxSize - m_FreeSize;}
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         size_t DbgGetNumFreeBlocks()const{return m_FreeBlocksByOffset.size();}
 #endif
 
@@ -357,7 +357,7 @@ namespace Diligent
             for(m_CurrAlignment = 1; m_CurrAlignment*2 <= m_MaxSize; m_CurrAlignment *= 2);
         }
 
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         void DbgVerifyList()
         {
             OffsetType TotalFreeSize = 0;

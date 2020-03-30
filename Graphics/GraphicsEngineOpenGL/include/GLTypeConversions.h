@@ -39,7 +39,7 @@ inline GLenum PrimitiveTopologyToGLTopology(PRIMITIVE_TOPOLOGY PrimTopology)
 {
     VERIFY_EXPR(PrimTopology < _countof(PrimTopologyToGLTopologyMap));
     auto GLTopology = PrimTopologyToGLTopologyMap[PrimTopology];
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     switch(PrimTopology)
     {
         case PRIMITIVE_TOPOLOGY_UNDEFINED:      VERIFY_EXPR(GLTopology == 0);                 break;
@@ -70,7 +70,7 @@ inline GLenum TypeToGLType(VALUE_TYPE Value)
 {
     VERIFY_EXPR(Value < _countof(TypeToGLTypeMap));
     auto GLType = TypeToGLTypeMap[Value];
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     switch(Value)
     {
         case VT_INT8:    VERIFY_EXPR(GLType == GL_BYTE);           break;

@@ -224,7 +224,7 @@ ShaderResourceLayoutD3D11::ShaderResourceLayoutD3D11(IObject&                   
                 if (!SamplerFound)
                 {
                     AssignedSamplerIndex = TexSRVBindInfo::InvalidSamplerIndex;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                     // Shader error will be logged by the PipelineStateD3D11Impl
                     constexpr bool LogStaticSamplerArrayError = false;
                     if (m_pResources->FindStaticSampler(AssignedSamplerAttribs, ResourceLayout, LogStaticSamplerArrayError) < 0)
@@ -235,7 +235,7 @@ ShaderResourceLayoutD3D11::ShaderResourceLayoutD3D11(IObject&                   
                 }
                 else
                 {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
                     // Shader error will be logged by the PipelineStateD3D11Impl
                     constexpr bool LogStaticSamplerArrayError = false;
                     if (m_pResources->FindStaticSampler(AssignedSamplerAttribs, ResourceLayout, LogStaticSamplerArrayError) >= 0)
@@ -712,7 +712,7 @@ public:
     template<typename ResourceType>
     bool TryResource(ShaderResourceLayoutD3D11::OffsetType NextResourceTypeOffset)
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         VERIFY(Layout.GetResourceOffset<ResourceType>() >= dbgPreviousResourceOffset, "Resource types are processed out of order!");
         dbgPreviousResourceOffset = Layout.GetResourceOffset<ResourceType>();
         VERIFY_EXPR(NextResourceTypeOffset >= Layout.GetResourceOffset<ResourceType>());
@@ -737,7 +737,7 @@ private:
     const ShaderResourceLayoutD3D11& Layout;
     const size_t VarOffset;
     Uint32 Index = 0;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     Uint32 dbgPreviousResourceOffset = 0;
 #endif
 };
@@ -788,7 +788,7 @@ public:
     template<typename ResourceType>
     IShaderResourceVariable* TryResource()
     {
-#ifdef _DEBUG
+#ifdef DE_DEBUG
         VERIFY(Layout.GetResourceOffset<ResourceType>() >= dbgPreviousResourceOffset, "Resource types are processed out of order!");
         dbgPreviousResourceOffset = Layout.GetResourceOffset<ResourceType>();
 #endif
@@ -805,7 +805,7 @@ public:
 private:
     ShaderResourceLayoutD3D11& Layout;
     Uint32 Index;
-#ifdef _DEBUG
+#ifdef DE_DEBUG
     Uint32 dbgPreviousResourceOffset = 0;
 #endif
 };
