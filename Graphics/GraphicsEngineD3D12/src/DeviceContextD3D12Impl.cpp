@@ -1798,7 +1798,7 @@ namespace Diligent
 	void DeviceContextD3D12Impl::ForceResolveQueries()
 	{
 		RenderDeviceD3D12Impl* pDevice = m_pDevice.RawPtr<RenderDeviceD3D12Impl>();
-		for (int i = 0; i < pDevice->GetMaxFrameCount() + 1; ++i)
+		for (Uint32 i = 0; i < pDevice->GetMaxFrameCount() + 1; ++i)
 			ResolveQueries();
 	}
 
