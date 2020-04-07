@@ -1812,7 +1812,6 @@ namespace Diligent
 		UINT readBackFrameID = (m_queryFrameID + 1) % (pDevice->GetMaxFrameCount() + 1);
 
 		// Resolve query for the current frame.
-		Uint32 accumQueries = 0;
 		for (size_t i = 0; i < 3; ++i)
 		{
 			D3D12_QUERY_TYPE queryType = (D3D12_QUERY_TYPE)i;
