@@ -204,7 +204,7 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
     memset(ppContexts, 0, sizeof(*ppContexts) * (1 + EngineCI.NumDeferredContexts));
 
     RefCntAutoPtr<CommandQueueD3D12Impl> pCmdQueueD3D12;
-    CComPtr<ID3D12Device>                d3d12Device;
+    CComPtr<ID3D12Device3>                d3d12Device;
     try
     {
         // Enable the D3D12 debug layer.
@@ -264,7 +264,7 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
         {
             auto d3dFeatureLevel = GetD3DFeatureLevel(FeatureLevel);
 
-            hr = D3D12CreateDevice(hardwareAdapter, d3dFeatureLevel, __uuidof(d3d12Device), reinterpret_cast<void**>(static_cast<ID3D12Device**>(&d3d12Device)));
+            hr = D3D12CreateDevice(hardwareAdapter, d3dFeatureLevel, __uuidof(d3d12Device), reinterpret_cast<void**>(static_cast<ID3D12Device3**>(&d3d12Device)));
             if (SUCCEEDED(hr))
             {
                 VERIFY_EXPR(d3d12Device);
@@ -283,7 +283,7 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
             {
                 auto d3dFeatureLevel = GetD3DFeatureLevel(FeatureLevel);
 
-                hr = D3D12CreateDevice(warpAdapter, d3dFeatureLevel, __uuidof(d3d12Device), reinterpret_cast<void**>(static_cast<ID3D12Device**>(&d3d12Device)));
+                hr = D3D12CreateDevice(warpAdapter, d3dFeatureLevel, __uuidof(d3d12Device), reinterpret_cast<void**>(static_cast<ID3D12Device3**>(&d3d12Device)));
                 if (SUCCEEDED(hr))
                 {
                     VERIFY_EXPR(d3d12Device);
