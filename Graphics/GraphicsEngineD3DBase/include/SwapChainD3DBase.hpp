@@ -27,7 +27,10 @@
 
 #pragma once
 
+# pragma warning(push)
+# pragma warning(disable: 4800) // SDK 10.0.18362.0 generates this warning/error in IsActiveSessionCountLimited()
 #include <VersionHelpers.h>
+# pragma warning(pop)
 #include "SwapChainBase.hpp"
 
 /// \file
