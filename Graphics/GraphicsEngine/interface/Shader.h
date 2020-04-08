@@ -223,6 +223,26 @@ struct TShaderReflectionCallbacks
 	TTextureCallback TextureCallback;
 };
 
+/// Shader version
+struct ShaderVersion
+{
+    /// Major revision
+    Uint8 Major DEFAULT_INITIALIZER(0);
+
+    /// Minor revision
+    Uint8 Minor DEFAULT_INITIALIZER(0);
+
+#if DILIGENT_CPP_INTERFACE
+    ShaderVersion() noexcept
+    {}
+    ShaderVersion(Uint8 _Major, Uint8 _Minor) noexcept :
+        Major{_Major},
+        Minor{_Minor}
+    {}
+#endif
+};
+typedef struct ShaderVersion ShaderVersion;
+
 
 
 // clang-format off
