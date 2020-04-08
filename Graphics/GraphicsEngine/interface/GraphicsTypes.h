@@ -52,6 +52,7 @@ struct IBuffer;
 DILIGENT_TYPED_ENUM(VALUE_TYPE, Uint8)
 {
     VT_UNDEFINED = 0, ///< Undefined type
+	VT_BOOL,          ///< Bool
     VT_INT8,          ///< Signed 8-bit integer
     VT_INT16,         ///< Signed 16-bit integer
     VT_INT32,         ///< Signed 32-bit integer
