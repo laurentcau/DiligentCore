@@ -1226,7 +1226,15 @@ DILIGENT_TYPED_ENUM(ADAPTER_TYPE, Uint8)
     ADAPTER_TYPE_HARDWARE
 };
 
+/// Hardware adapter type
+DILIGENT_TYPED_ENUM(ADAPTER_CAPABILITY, Uint8)
+{
+    /// no particular capabilities
+    ADAPTER_CAPABILITY_BASE = 0,
 
+    /// Raytracing
+    ADAPTER_CAPABILITY_RAYTRACING = 1
+};
 /// Flags indicating how an image is stretched to fit a given monitor's resolution.
 /// \sa <a href = "https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/bb173066(v=vs.85)">DXGI_MODE_SCALING enumeration on MSDN</a>, 
 enum SCALING_MODE
