@@ -1112,6 +1112,16 @@ DILIGENT_TYPED_ENUM(ADAPTER_TYPE, Uint8)
     ADAPTER_TYPE_HARDWARE
 };
 
+/// Hardware adapter type
+DILIGENT_TYPED_ENUM(ADAPTER_CAPABILITY, Uint8)
+{
+    /// no particular capabilities
+    ADAPTER_CAPABILITY_BASE = 0,
+
+    /// Raytracing
+    ADAPTER_CAPABILITY_RAYTRACING = 1
+};
+
 /// Adapter attributes
 struct AdapterAttribs
 {
@@ -1138,6 +1148,9 @@ struct AdapterAttribs
 
     /// Number of outputs this device has
     Uint32 NumOutputs               DEFAULT_INITIALIZER(0);
+
+    /// capability flags. see Diligent::ADAPTER_CAPABILITY.
+    Uint32 CapabilityFlags          DEFAULT_INITIALIZER(0);
 };
 typedef struct AdapterAttribs AdapterAttribs;
 
