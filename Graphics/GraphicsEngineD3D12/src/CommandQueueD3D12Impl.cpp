@@ -94,6 +94,11 @@ Uint64 CommandQueueD3D12Impl::WaitForIdle()
 Uint64 CommandQueueD3D12Impl::GetCompletedFenceValue()
 {
     auto CompletedFenceValue = m_d3d12Fence->GetCompletedValue();
+    if (CompletedFenceValue == UINT64_MAX) // see https://docs.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12fence-getcompletedvalue
+    {
+        LOG_FATAL_ERROR_MESSAGE("Device removed");
+    }
+
     if (CompletedFenceValue > m_LastCompletedFenceValue)
         m_LastCompletedFenceValue = CompletedFenceValue;
     return m_LastCompletedFenceValue;
