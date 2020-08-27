@@ -322,6 +322,9 @@ DILIGENT_BEGIN_INTERFACE(IRenderDevice, IObject)
     ///          are complete when the method returns.
     VIRTUAL void METHOD(IdleGPU)(THIS) PURE;
 
+    /// Register callback to get all resource creation
+    VIRTUAL void METHOD(SetDeviceObjectCreateCallBack)(THIS_
+                                                    const std::function<void (IDeviceObject*)>& fct) PURE;
 
     /// Returns engine factory this device was created from.
     /// \remark This method does not increment the reference counter of the returned interface,
