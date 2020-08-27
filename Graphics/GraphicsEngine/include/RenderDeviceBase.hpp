@@ -358,6 +358,8 @@ public:
 
     void OnCreateDeviceObject(IDeviceObject* pNewObject)
     {
+        if (m_onDeviceObjectCreate)
+            m_onDeviceObjectCreate(pNewObject);
     }
 
     StateObjectsRegistry<SamplerDesc>& GetSamplerRegistry() { return m_SamplersRegistry; }
@@ -389,6 +391,8 @@ public:
     FixedBlockMemoryAllocator& GetBuffViewObjAllocator() { return m_BuffViewObjAllocator; }
     FixedBlockMemoryAllocator& GetSRBAllocator() { return m_SRBAllocator; }
 
+    virtual void SetDeviceObjectCreateCallBack(const std::function<void (IDeviceObject*)>& fct) { m_onDeviceObjectCreate = fct; }
+
 protected:
     virtual void TestTextureFormat(TEXTURE_FORMAT TexFormat) = 0;
 
@@ -397,6 +401,8 @@ protected:
     void CreateDeviceObject(const Char* ObjectTypeName, const TObjectDescType& Desc, TObjectType** ppObject, TObjectConstructor ConstructObject);
 
     RefCntAutoPtr<IEngineFactory> m_pEngineFactory;
+
+    std::function<void(IDeviceObject*)> m_onDeviceObjectCreate;
 
     DeviceCaps m_DeviceCaps;
 
