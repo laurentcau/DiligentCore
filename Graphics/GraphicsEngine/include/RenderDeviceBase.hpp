@@ -397,6 +397,8 @@ public:
     FixedBlockMemoryAllocator& GetBuffViewObjAllocator() { return m_BuffViewObjAllocator; }
     FixedBlockMemoryAllocator& GetSRBAllocator() { return m_SRBAllocator; }
 
+    virtual void SetDeviceObjectCreateCallBack(const std::function<void (IDeviceObject*)>& fct) { m_onDeviceObjectCreate = fct; }
+
 protected:
     virtual void TestTextureFormat(TEXTURE_FORMAT TexFormat) = 0;
 
@@ -605,6 +607,8 @@ protected:
 
 protected:
     RefCntAutoPtr<IEngineFactory> m_pEngineFactory;
+
+    std::function<void(IDeviceObject*)> m_onDeviceObjectCreate;
 
     DeviceCaps       m_DeviceCaps;
     DeviceProperties m_DeviceProperties;
