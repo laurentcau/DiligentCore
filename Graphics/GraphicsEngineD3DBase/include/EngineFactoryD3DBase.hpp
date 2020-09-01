@@ -156,11 +156,7 @@ public:
         std::vector<CComPtr<IDXGIAdapter1>> DXGIAdapters;
 
         CComPtr<IDXGIFactory2> pFactory;
-        UINT dxgiFactoryFlags= 0;
-        #ifdef DILIGENT_DEBUG
-			dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
-        #endif
-        if (FAILED(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&pFactory))))
+        if (FAILED(CreateDXGIFactory1(__uuidof(IDXGIFactory2), (void**)&pFactory)))
         {
             LOG_ERROR_MESSAGE("Failed to create DXGI Factory");
             return std::move(DXGIAdapters);

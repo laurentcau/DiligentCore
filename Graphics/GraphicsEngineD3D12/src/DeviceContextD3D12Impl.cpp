@@ -2190,4 +2190,11 @@ void DeviceContextD3D12Impl::ResolveTextureSubresource(ITexture*                
 		auto& CmdCtx = GetCmdContext();
 		CmdCtx.InvalidateHeaps();
 	}
-} // namespace Diligent
+
+    void DILIGENT_CALL_TYPE DeviceContextD3D12Impl::FlushResourceBarriers()
+    {
+        auto& CmdCtx = GetCmdContext();
+        CmdCtx.FlushResourceBarriers();
+    }
+
+    } // namespace Diligent
