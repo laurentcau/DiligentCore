@@ -2305,6 +2305,13 @@ void DeviceContextD3D12Impl::ResolveTextureSubresource(ITexture*                
 		CmdCtx.InvalidateHeaps();
 	}
 
+    void DILIGENT_CALL_TYPE DeviceContextD3D12Impl::FlushResourceBarriers()
+    {
+        auto& CmdCtx = GetCmdContext();
+        CmdCtx.FlushResourceBarriers();
+    }
+
+
 void DeviceContextD3D12Impl::BuildBLAS(const BuildBLASAttribs& Attribs)
 {
     if (!TDeviceContextBase::BuildBLAS(Attribs, 0))
