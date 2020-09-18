@@ -1705,6 +1705,9 @@ struct GraphicsAdapterInfo
 
     /// Supported access types for the unified memory.
     CPU_ACCESS_FLAGS UnifiedMemoryCPUAccess DEFAULT_INITIALIZER(CPU_ACCESS_NONE);
+
+    // A unique value that identifies the adapter
+    Uint64 AdapterLuid                DEFAULT_INITIALIZER(0);
 };
 typedef struct GraphicsAdapterInfo GraphicsAdapterInfo;
 

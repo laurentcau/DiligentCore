@@ -78,6 +78,7 @@ public:
                 auto& Attribs = Adapters[adapter];
 
                 Attribs = DXGI_ADAPTER_DESC_To_GraphicsAdapterInfo(AdapterDesc);
+                Attribs.AdapterLuid           = (Uint64(AdapterDesc.AdapterLuid.HighPart) << sizeof(AdapterDesc.AdapterLuid.LowPart) * 8) | AdapterDesc.AdapterLuid.LowPart;
 
                 if (IsDirectXRaytracingSupported(pDXIAdapter))
                     Attribs.CapabilityFlags = Attribs.CapabilityFlags | ADAPTER_CAPABILITY_RAYTRACING;
