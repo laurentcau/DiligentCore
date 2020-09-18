@@ -1146,6 +1146,9 @@ struct AdapterAttribs
     /// The PCI ID of the hardware device
     Uint32 DeviceId                 DEFAULT_INITIALIZER(0);
 
+    // A unique value that identifies the adapter
+    Uint64 AdapterLuid                DEFAULT_INITIALIZER(0);
+
     /// Number of outputs this device has
     Uint32 NumOutputs               DEFAULT_INITIALIZER(0);
 
