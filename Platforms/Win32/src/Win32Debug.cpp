@@ -30,12 +30,14 @@
 #include <csignal>
 #include <iostream>
 #include <Windows.h>
+#include "Errors.hpp"
 
 using namespace Diligent;
 
 void WindowsDebug::AssertionFailed(const Diligent::Char* Message, const char* Function, const char* File, int Line)
 {
     auto AssertionFailedMessage = FormatAssertionFailedMessage(Message, Function, File, Line);
+    LOG_ERROR_MESSAGE(AssertionFailedMessage.c_str());
     OutputDebugMessage(DEBUG_MESSAGE_SEVERITY_ERROR, AssertionFailedMessage.c_str(), nullptr, nullptr, 0);
 
     int nCode = MessageBoxA(NULL,
