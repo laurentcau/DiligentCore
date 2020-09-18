@@ -39,9 +39,12 @@
 #    include "../../GraphicsEngine/interface/LoadEngineDll.h"
 #endif
 
+struct ID3D12Device3;
+
 DILIGENT_BEGIN_NAMESPACE(Diligent)
 
 struct ICommandQueueD3D12;
+
 
 // {72BD38B0-684A-4889-9C68-0A80EC802DDE}
 static const INTERFACE_ID IID_EngineFactoryD3D12 =
@@ -173,6 +176,10 @@ DILIGENT_BEGIN_INTERFACE(IEngineFactoryD3D12, IEngineFactory)
                                                TEXTURE_FORMAT         Format,
                                                Uint32 REF             NumDisplayModes,
                                                DisplayModeAttribs*    DisplayModes) PURE;
+
+    /// Useful for initializing some libraries after device creation (ex: nVidia aftermath) 
+    VIRTUAL void METHOD(SetAfterDeviceCreationCallback)(const std::function<void(ID3D12Device3*)>& fct) PURE;
+
 };
 DILIGENT_END_INTERFACE
 

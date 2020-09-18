@@ -101,11 +101,14 @@ public:
                                                           DisplayModeAttribs*    DisplayModes) override final;
 
 
+     virtual void DILIGENT_CALL_TYPE SetAfterDeviceCreationCallback(const std::function<void(ID3D12Device3*)>& fct) override final { m_afterDeviceCreationCallback = fct; }
+
 private:
 #if USE_D3D12_LOADER
     HMODULE     m_hD3D12Dll = NULL;
     std::string m_DllName;
 #endif
+    std::function<void(ID3D12Device3*)> m_afterDeviceCreationCallback;
 };
 
 bool EngineFactoryD3D12Impl::LoadD3D12(const char* DllName)
@@ -267,6 +270,8 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
             hr = D3D12CreateDevice(hardwareAdapter, d3dFeatureLevel, __uuidof(d3d12Device), reinterpret_cast<void**>(static_cast<ID3D12Device3**>(&d3d12Device)));
             if (SUCCEEDED(hr))
             {
+                if (m_afterDeviceCreationCallback)
+                    m_afterDeviceCreationCallback(d3d12Device);
                 VERIFY_EXPR(d3d12Device);
                 break;
             }
