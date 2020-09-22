@@ -297,7 +297,7 @@ String BuildGLSLSourceString(const ShaderCreateInfo& ShaderCI,
         // all shader stages.
         // https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_separate_shader_objects.txt
         // (search for "Input Layout Qualifiers" and "Output Layout Qualifiers").
-        Attribs.UseInOutLocationQualifiers = deviceCaps.Features.SeparablePrograms;
+        Attribs.UseInOutLocationQualifiers = (bool)deviceCaps.Features.SeparablePrograms;
         auto ConvertedSource               = Converter.Convert(Attribs);
 
         GLSLSource.append(ConvertedSource);
