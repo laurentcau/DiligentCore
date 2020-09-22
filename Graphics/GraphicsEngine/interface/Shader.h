@@ -174,9 +174,9 @@ struct ShaderMacro
 };
 typedef struct ShaderMacro ShaderMacro;
 
-typedef std::function<bool(const std::string&, size_t, size_t)> TCBReflectionCallback; // args: constant buffer name, memory size, number of variables
+typedef std::function<bool(const std::string&, size_t, size_t)>                                                 TCBReflectionCallback;    // args: constant buffer name, memory size, number of variables
 typedef std::function<void(const std::string&, const std::string&, VALUE_TYPE, size_t, size_t, size_t, size_t)> TCBVarReflectionCallback; // args: constant buffer name, variable name, type, number of elements, number of columns, number of rows, start offset
-typedef std::function<void(const std::string&, Diligent::RESOURCE_DIMENSION)> TTextureCallback; // args: texture name, dimension
+typedef std::function<void(const std::string&, Diligent::RESOURCE_DIMENSION)>                                   TTextureCallback;         // args: texture name, dimension
 
 
 #if DILIGENT_CPP_INTERFACE
@@ -223,6 +223,7 @@ struct TShaderReflectionCallbacks
 	TTextureCallback TextureCallback;
 };
 
+
 /// Shader version
 struct ShaderVersion
 {
@@ -239,6 +240,11 @@ struct ShaderVersion
         Major{_Major},
         Minor{_Minor}
     {}
+
+    bool operator==(const ShaderVersion& rhs) const
+    {
+        return Major == rhs.Major && Minor == rhs.Minor;
+    }
 #endif
 };
 typedef struct ShaderVersion ShaderVersion;
