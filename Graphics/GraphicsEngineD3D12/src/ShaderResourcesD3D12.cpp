@@ -100,7 +100,7 @@ ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
                                            const ShaderDesc& ShdrDesc,
                                            const char*       CombinedSamplerSuffix,
                                            IDXCompiler*      pDXCompiler,
-											const TShaderReflectionCallbacks& ShaderReflectionCallbacks) :
+                                           const TShaderReflectionCallbacks& ShaderReflectionCallbacks) :
     ShaderResources{ShdrDesc.ShaderType}
 {
     class NewResourceHandler
@@ -115,8 +115,7 @@ ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
         void OnNewTexSRV (const D3DShaderResourceAttribs& TexAttribs)    {}
         // clang-format on
     };
-    Initialize<D3D12_SHADER_DESC, D3D12_SHADER_INPUT_BIND_DESC, D3D12_SHADER_BUFFER_DESC, D3D12_SHADER_VARIABLE_DESC, D3D12_SHADER_TYPE_DESC, ID3D12ShaderReflection>(
-
+    
     CComPtr<ID3D12ShaderReflection> pShaderReflection;
     if (IsDXILBytecode(pShaderBytecode))
     {
@@ -134,7 +133,7 @@ ShaderResourcesD3D12::ShaderResourcesD3D12(ID3DBlob*         pShaderBytecode,
         CHECK_D3D_RESULT_THROW(hr, "Failed to get the shader reflection");
     }
 
-    Initialize<D3D12_SHADER_DESC, D3D12_SHADER_INPUT_BIND_DESC, ID3D12ShaderReflection>(
+    Initialize<D3D12_SHADER_DESC, D3D12_SHADER_INPUT_BIND_DESC, D3D12_SHADER_BUFFER_DESC, D3D12_SHADER_VARIABLE_DESC, D3D12_SHADER_TYPE_DESC, ID3D12ShaderReflection>(
         pShaderReflection,
         NewResourceHandler{},
         ShdrDesc.Name,

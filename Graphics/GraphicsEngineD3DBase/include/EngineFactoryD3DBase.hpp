@@ -46,17 +46,8 @@ public:
         TEngineFactoryBase{FactoryIID}
     {}
 
+    virtual bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter) { return false; };
 
-    // Returns bool whether the device supports DirectX Raytracing tier.
-	bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter)
-	{
-		CComPtr<ID3D12Device> testDevice;
-		D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureSupportData = {};
-
-		return SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&testDevice)))
-			&& SUCCEEDED(testDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupportData, sizeof(featureSupportData)))
-			&& featureSupportData.RaytracingTier != D3D12_RAYTRACING_TIER_NOT_SUPPORTED;
-	}
 
     virtual void DILIGENT_CALL_TYPE EnumerateAdapters(DIRECT3D_FEATURE_LEVEL MinFeatureLevel,
                                                       Uint32&                NumAdapters,

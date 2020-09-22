@@ -1708,6 +1708,9 @@ struct GraphicsAdapterInfo
 
     // A unique value that identifies the adapter
     Uint64 AdapterLuid                DEFAULT_INITIALIZER(0);
+
+    /// capability flags. see Diligent::ADAPTER_CAPABILITY.
+     Uint32 CapabilityFlags          DEFAULT_INITIALIZER(0);
 };
 typedef struct GraphicsAdapterInfo GraphicsAdapterInfo;
 
