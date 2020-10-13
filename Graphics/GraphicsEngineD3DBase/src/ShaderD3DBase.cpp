@@ -50,6 +50,9 @@ public:
     {
     }
 
+    virtual ~D3DIncludeImpl() 
+    {}
+
     STDMETHOD(Open)
     (THIS_ D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes)
     {
