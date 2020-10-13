@@ -46,6 +46,9 @@ public:
         TEngineFactoryBase{FactoryIID}
     {}
 
+    virtual ~EngineFactoryD3DBase()
+    {}
+
     virtual bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter) { return false; };
 
 
