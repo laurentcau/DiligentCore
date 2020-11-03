@@ -372,7 +372,7 @@ void EngineFactoryD3D12Impl::CreateDeviceAndContextsD3D12(const EngineD3D12Creat
         // Describe and create the command queue.
         D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 
-        queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+        queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_DISABLE_GPU_TIMEOUT;
         queueDesc.Type  = D3D12_COMMAND_LIST_TYPE_DIRECT;
 
         CComPtr<ID3D12CommandQueue> pd3d12CmdQueue;
