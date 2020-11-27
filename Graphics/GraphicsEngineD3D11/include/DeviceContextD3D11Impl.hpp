@@ -286,6 +286,10 @@ public:
 
     void TransitionResource(TextureBaseD3D11& Texture, RESOURCE_STATE NewState, RESOURCE_STATE OldState = RESOURCE_STATE_UNKNOWN, bool UpdateResourceState = true);
     void TransitionResource(BufferD3D11Impl& Buffer, RESOURCE_STATE NewState, RESOURCE_STATE OldState = RESOURCE_STATE_UNKNOWN, bool UpdateResourceState = true);
+    virtual void FlushResourceBarriers() override final;
+
+    /// Number of different shader types (Vertex, Pixel, Geometry, Domain, Hull, Compute)
+    static constexpr int NumShaderTypes = 6;
 
 private:
     /// Commits d3d11 index buffer to d3d11 device context.

@@ -2297,6 +2297,12 @@ void DeviceContextD3D11Impl::DvpVerifyCommittedShaders()
     VERIFY_SHADER(COMPUTE, Compute, C);
 }
 
+void DeviceContextD3D11Impl::FlushResourceBarriers()
+{
+    
+}
+
+
 #endif // VERIFY_CONTEXT_BINDINGS
 
 } // namespace Diligent
