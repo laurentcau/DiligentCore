@@ -262,6 +262,8 @@ public:
     /// Unbinds all render targets. Used when resizing the swap chain.
     virtual void ResetRenderTargets() override final;
 
+    virtual void FlushResourceBarriers() override final;
+
     /// Number of different shader types (Vertex, Pixel, Geometry, Domain, Hull, Compute)
     static constexpr int NumShaderTypes = 6;
 

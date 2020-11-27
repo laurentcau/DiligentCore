@@ -1482,6 +1482,8 @@ DILIGENT_BEGIN_INTERFACE(IDeviceContext, IObject)
                                                   StateTransitionDesc* pResourceBarriers) PURE;
 
 
+    VIRTUAL void METHOD(FlushResourceBarriers)(THIS_) PURE;
+
     /// Resolves a multi-sampled texture subresource into a non-multi-sampled texture subresource.
 
     /// \param [in] pSrcTexture    - Source multi-sampled texture.
