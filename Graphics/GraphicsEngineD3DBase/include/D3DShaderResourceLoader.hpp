@@ -370,20 +370,46 @@ void LoadD3DShaderResources(TShaderReflection*  pShaderReflection,
 						D3D_SHADER_TYPE_DESC type_desc;
 						pType->GetDesc(&type_desc);
 
-						std::string VarName(var_desc.Name);
+                        if (type_desc.Class == D3D_SVC_STRUCT)
+                        {
+                            for (unsigned k = 0; k < type_desc.Members; ++k)
+                            {
+                                auto memberType = pType->GetMemberTypeByIndex(k);
+                                LPCSTR name = pType->GetMemberTypeName(k);
+                                D3D_SHADER_TYPE_DESC memberTypeDesc;
+                                memberType->GetDesc(&memberTypeDesc);
+                                VALUE_TYPE type = VT_UNDEFINED;
+                                switch (memberTypeDesc.Type)
+                                {
+                                    case D3D_SVT_FLOAT: type = VT_FLOAT32; break;
+                                    case D3D_SVT_INT: type = VT_INT32; break;
+                                    case D3D_SVT_BOOL: type = VT_BOOL; break;
+                                    case D3D_SVT_DOUBLE: type = VT_FLOAT64; break;
+                                    default:
+                                        UNEXPECTED("Unexpected variable type ()"); //add missing type if needed
+                                }
+                                UINT offset = var_desc.StartOffset + memberTypeDesc.Offset;
+                                ShaderReflectionCallbacks.CBVarReflectionCallback(BufferName, name, type, memberTypeDesc.Elements, memberTypeDesc.Columns, memberTypeDesc.Rows, offset);
+                            }
+                        }
+                        else
+                        {
+                            std::string VarName(var_desc.Name);
+                            VALUE_TYPE type = VT_UNDEFINED;
+                            switch (type_desc.Type)
+                            {
+                                case D3D_SVT_FLOAT: type = VT_FLOAT32; break;
+                                case D3D_SVT_INT: type = VT_INT32; break;
+                                case D3D_SVT_BOOL: type = VT_BOOL; break;
+                                case D3D_SVT_DOUBLE: type = VT_FLOAT64; break;
+                                default:
+                                    UNEXPECTED("Unexpected variable type ()"); //add missing type if needed
+                            }
 
-						VALUE_TYPE type = VT_UNDEFINED;
-						switch (type_desc.Type)
-						{
-						case D3D_SVT_FLOAT: type = VT_FLOAT32; break;
-						case D3D_SVT_INT: type = VT_INT32; break;
-						case D3D_SVT_BOOL: type = VT_BOOL; break;
-						case D3D_SVT_DOUBLE: type = VT_FLOAT64; break;
-						default:
-							UNEXPECTED("Unexpected variable type ()"); //add missing type if needed
-}
+                            ShaderReflectionCallbacks.CBVarReflectionCallback(BufferName, VarName, type, type_desc.Elements, type_desc.Columns, type_desc.Rows, var_desc.StartOffset);
+                        }
 
-						ShaderReflectionCallbacks.CBVarReflectionCallback(BufferName, VarName, type, type_desc.Elements, type_desc.Columns, type_desc.Rows, var_desc.StartOffset);
+
 					}
 				}
 
