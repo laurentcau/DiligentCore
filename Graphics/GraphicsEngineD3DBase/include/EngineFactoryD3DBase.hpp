@@ -49,7 +49,7 @@ public:
     virtual ~EngineFactoryD3DBase()
     {}
 
-    virtual bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter) { return false; };
+    virtual bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter, DIRECT3D_FEATURE_LEVEL MinFeatureLevel) { return false; };
 
 
     virtual void DILIGENT_CALL_TYPE EnumerateAdapters(DIRECT3D_FEATURE_LEVEL MinFeatureLevel,
@@ -74,7 +74,7 @@ public:
                 Attribs = DXGI_ADAPTER_DESC_To_GraphicsAdapterInfo(AdapterDesc);
                 Attribs.AdapterLuid           = (Uint64(AdapterDesc.AdapterLuid.HighPart) << sizeof(AdapterDesc.AdapterLuid.LowPart) * 8) | AdapterDesc.AdapterLuid.LowPart;
 
-                if (IsDirectXRaytracingSupported(pDXIAdapter))
+                if (IsDirectXRaytracingSupported(pDXIAdapter, MinFeatureLevel))
                     Attribs.CapabilityFlags = Attribs.CapabilityFlags | ADAPTER_CAPABILITY_RAYTRACING;
 
                 Attribs.NumOutputs = 0;

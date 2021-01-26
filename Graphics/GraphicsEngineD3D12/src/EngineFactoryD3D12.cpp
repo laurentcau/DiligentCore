@@ -103,12 +103,15 @@ public:
      virtual void DILIGENT_CALL_TYPE SetAfterDeviceCreationCallback(const std::function<void(ID3D12Device3*)>& fct) override final { m_afterDeviceCreationCallback = fct; }
 
      // Returns bool whether the device supports DirectX Raytracing tier.
-     bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter) override final
+     bool IsDirectXRaytracingSupported(IDXGIAdapter1* adapter, DIRECT3D_FEATURE_LEVEL MinFeatureLevel) override final
      {
          CComPtr<ID3D12Device>             testDevice;
          D3D12_FEATURE_DATA_D3D12_OPTIONS5 featureSupportData = {};
+         auto d3dFeatureLevel    = GetD3DFeatureLevel(MinFeatureLevel);
 
-         return SUCCEEDED(D3D12CreateDevice(adapter, D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&testDevice))) && SUCCEEDED(testDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupportData, sizeof(featureSupportData))) && featureSupportData.RaytracingTier != D3D12_RAYTRACING_TIER_NOT_SUPPORTED;
+         return SUCCEEDED(D3D12CreateDevice(adapter, d3dFeatureLevel, IID_PPV_ARGS(&testDevice))) 
+             && SUCCEEDED(testDevice->CheckFeatureSupport(D3D12_FEATURE_D3D12_OPTIONS5, &featureSupportData, sizeof(featureSupportData))) 
+             && featureSupportData.RaytracingTier == D3D12_RAYTRACING_TIER_1_1;
      }
 
 
