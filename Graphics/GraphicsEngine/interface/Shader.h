@@ -179,6 +179,26 @@ typedef std::function<void(const std::string&, const std::string&, VALUE_TYPE, s
 typedef std::function<void(const std::string&, Diligent::RESOURCE_DIMENSION)>                                   TTextureCallback;         // args: texture name, dimension
 
 
+struct TShaderReflectionCallbacks 
+{	// optional callbacks to retrieve constant buffer layout
+	// CBReflection is call each time a constant buffer is discovered
+	// CBVarReflection is call each time a variable is discovered
+	TCBReflectionCallback CBReflectionCallback;
+	TCBVarReflectionCallback CBVarReflectionCallback;
+
+	// optional callbacks to retrieve texture informations
+	TTextureCallback TextureCallback;
+};
+
+/// Shader version
+struct ShaderVersion
+{
+    /// Major revision
+    Uint8 Major DEFAULT_INITIALIZER(0);
+
+    /// Minor revision
+    Uint8 Minor DEFAULT_INITIALIZER(0);
+
 #if DILIGENT_CPP_INTERFACE
     ShaderVersion() noexcept
     {}
@@ -212,43 +232,8 @@ typedef std::function<void(const std::string&, Diligent::RESOURCE_DIMENSION)>   
         return Major == rhs.Major ? Minor <= rhs.Minor : Major <= rhs.Major;
     }
 #endif
-struct TShaderReflectionCallbacks 
-{	// optional callbacks to retrieve constant buffer layout
-	// CBReflection is call each time a constant buffer is discovered
-	// CBVarReflection is call each time a variable is discovered
-	TCBReflectionCallback CBReflectionCallback;
-	TCBVarReflectionCallback CBVarReflectionCallback;
-
-	// optional callbacks to retrieve texture informations
-	TTextureCallback TextureCallback;
-};
-
-
-/// Shader version
-struct ShaderVersion
-{
-    /// Major revision
-    Uint8 Major DEFAULT_INITIALIZER(0);
-
-    /// Minor revision
-    Uint8 Minor DEFAULT_INITIALIZER(0);
-
-#if DILIGENT_CPP_INTERFACE
-    ShaderVersion() noexcept
-    {}
-    ShaderVersion(Uint8 _Major, Uint8 _Minor) noexcept :
-        Major{_Major},
-        Minor{_Minor}
-    {}
-
-    bool operator==(const ShaderVersion& rhs) const
-    {
-        return Major == rhs.Major && Minor == rhs.Minor;
-    }
-#endif
 };
 typedef struct ShaderVersion ShaderVersion;
-
 
 
 // clang-format off
