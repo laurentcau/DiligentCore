@@ -569,9 +569,9 @@ void DeviceContextD3D12Impl::PrepareForDraw(GraphicsContext& GraphCtx, DRAW_FLAG
 #endif
 
     auto& RootInfo = GetRootTableInfo(PIPELINE_TYPE_GRAPHICS);
-    if (RootInfo.RequireUpdate(Flags & DRAW_FLAG_DYNAMIC_RESOURCE_BUFFERS_INTACT))
+    if (RootInfo.RequireUpdate((Flags & DRAW_FLAG_DYNAMIC_RESOURCE_BUFFERS_INTACT) != 0))
     {
-        CommitRootTablesAndViews<false>(RootInfo, Flags & DRAW_FLAG_DYNAMIC_RESOURCE_BUFFERS_INTACT);
+        CommitRootTablesAndViews<false>(RootInfo, (Flags & DRAW_FLAG_DYNAMIC_RESOURCE_BUFFERS_INTACT) != 0);
     }
 
 #ifdef DILIGENT_DEVELOPMENT
