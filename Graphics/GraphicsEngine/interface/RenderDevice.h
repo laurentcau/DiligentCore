@@ -336,7 +336,7 @@ DILIGENT_BEGIN_INTERFACE(IRenderDevice, IObject)
 
     /// Register callback to get all resource creation
     VIRTUAL void METHOD(SetDeviceObjectCreateCallBack)(THIS_
-                                                    const std::function<void (IDeviceObject*)>& fct) PURE;
+                                                    const std::function<void (IDeviceObject*, const char*)>& fct) PURE;
 
     /// Returns engine factory this device was created from.
     /// \remark This method does not increment the reference counter of the returned interface,

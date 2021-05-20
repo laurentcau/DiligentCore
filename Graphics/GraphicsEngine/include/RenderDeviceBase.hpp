@@ -397,10 +397,19 @@ public:
     FixedBlockMemoryAllocator& GetBuffViewObjAllocator() { return m_BuffViewObjAllocator; }
     FixedBlockMemoryAllocator& GetSRBAllocator() { return m_SRBAllocator; }
 
-    virtual void SetDeviceObjectCreateCallBack(const std::function<void (IDeviceObject*)>& fct) { m_onDeviceObjectCreate = fct; }
+    virtual void SetDeviceObjectCreateCallBack(const std::function<void(IDeviceObject*, const char*)>& fct) { m_onDeviceObjectCreate = fct; }
 
 protected:
     virtual void TestTextureFormat(TEXTURE_FORMAT TexFormat) = 0;
+
+    template <typename T> const char* TypeToString()
+    {
+#ifdef _MSC_VER
+        return __FUNCSIG__;
+#else
+        return __PRETTY_FUNCTION__;
+#endif
+    }
 
     /// Helper template function to facilitate device object creation
 
@@ -455,6 +464,9 @@ protected:
                 LOG_ERROR("Failed to create ", ObjectTypeName, " object '", (Desc.Name ? Desc.Name : ""), "'");
             }
         }
+
+        if (m_onDeviceObjectCreate)
+            m_onDeviceObjectCreate(*ppObject, TypeToString<ObjectType>());
     }
 
     template <typename PSOCreateInfoType, typename... ExtraArgsType>
@@ -608,7 +620,7 @@ protected:
 protected:
     RefCntAutoPtr<IEngineFactory> m_pEngineFactory;
 
-    std::function<void(IDeviceObject*)> m_onDeviceObjectCreate;
+    std::function<void(IDeviceObject*, const char*)> m_onDeviceObjectCreate;
 
     DeviceCaps       m_DeviceCaps;
     DeviceProperties m_DeviceProperties;

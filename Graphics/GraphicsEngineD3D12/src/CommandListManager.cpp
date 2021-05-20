@@ -76,7 +76,10 @@ void CommandListManager::CreateNewCommandList(ID3D12GraphicsCommandList** List, 
     }
 
     VERIFY(SUCCEEDED(hr), "Failed to create command list");
-    (*List)->SetName(L"CommandList");
+    static int   counter = 0;
+    std::wstring s(L"CommandList");
+    s += std::to_wstring(counter++);
+    (*List)->SetName(s.c_str());
 }
 
 
