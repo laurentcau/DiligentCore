@@ -72,7 +72,7 @@ D3D12DynamicPage::D3D12DynamicPage(ID3D12Device* pd3d12Device, Uint64 Size)
 
     m_pd3d12Buffer->Map(0, nullptr, &m_CPUVirtualAddress);
 
-    LOG_INFO_MESSAGE("Created dynamic memory page. Size: ", FormatMemorySize(Size, 2), "; GPU virtual address 0x", std::hex, m_GPUVirtualAddress);
+    //LOG_INFO_MESSAGE("Created dynamic memory page. Size: ", FormatMemorySize(Size, 2), "; GPU virtual address 0x", std::hex, m_GPUVirtualAddress);
 }
 
 D3D12DynamicMemoryManager::D3D12DynamicMemoryManager(IMemoryAllocator&      Allocator,
@@ -102,6 +102,7 @@ D3D12DynamicPage D3D12DynamicMemoryManager::AllocatePage(Uint64 SizeInBytes)
         VERIFY_EXPR(PageIt->first >= SizeInBytes);
         D3D12DynamicPage Page(std::move(PageIt->second));
         m_AvailablePages.erase(PageIt);
+        //LOG_INFO_MESSAGE("Reuse dynamic page: size:", Page.GetSize(), " GPU adress:0x", std::hex, Page.GetGPUAddress(0));
         return Page;
     }
     else
@@ -144,6 +145,8 @@ void D3D12DynamicMemoryManager::ReleasePages(std::vector<D3D12DynamicPage>& Page
 #ifdef DILIGENT_DEVELOPMENT
                 --Mgr->m_AllocatedPageCounter;
 #endif
+                //LOG_INFO_MESSAGE("Recycle dynamic page: size:", Page.GetSize(), " GPU adress:0x", std::hex, Page.GetGPUAddress(0));
+
                 auto PageSize = Page.GetSize();
                 Mgr->m_AvailablePages.emplace(PageSize, std::move(Page));
             }

@@ -172,7 +172,7 @@ struct hash<Diligent::TextureViewDesc>
 
 namespace Diligent
 {
-
+extern std::function<void(void*, size_t)> gAddShaderBinary;
 /// Base implementation of a render device
 
 /// \tparam EngineImplTraits - Engine implementation type traits.
@@ -398,6 +398,11 @@ public:
     FixedBlockMemoryAllocator& GetSRBAllocator() { return m_SRBAllocator; }
 
     virtual void SetDeviceObjectCreateCallBack(const std::function<void(IDeviceObject*, const char*)>& fct) { m_onDeviceObjectCreate = fct; }
+    void         SetOnPatchShader(std::function<void(void*, size_t)>& fct)
+    {
+      
+        gAddShaderBinary = fct;
+    }
 
 protected:
     virtual void TestTextureFormat(TEXTURE_FORMAT TexFormat) = 0;

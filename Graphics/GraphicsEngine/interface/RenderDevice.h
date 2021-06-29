@@ -338,6 +338,10 @@ DILIGENT_BEGIN_INTERFACE(IRenderDevice, IObject)
     VIRTUAL void METHOD(SetDeviceObjectCreateCallBack)(THIS_
                                                     const std::function<void (IDeviceObject*, const char*)>& fct) PURE;
 
+    /// Register callback to get all resource creation
+    VIRTUAL void METHOD(SetOnPatchShader)(THIS_
+                                                    std::function<void(void*, size_t)>& fct) PURE;
+
     /// Returns engine factory this device was created from.
     /// \remark This method does not increment the reference counter of the returned interface,
     ///         so the application should not call Release().

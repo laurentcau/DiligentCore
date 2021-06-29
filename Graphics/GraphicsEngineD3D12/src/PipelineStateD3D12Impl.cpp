@@ -56,6 +56,8 @@
 namespace Diligent
 {
 
+std::function<void(void*, size_t)> gAddShaderBinary;
+
 namespace
 {
 #ifdef _MSC_VER
@@ -565,6 +567,13 @@ void PipelineStateD3D12Impl::InitRootSignature(const PipelineStateCreateInfo& Cr
                 if (!DXBCUtils::RemapResourceBindings(ResourceMap, pBlob->GetBufferPointer(), pBlob->GetBufferSize()))
                     LOG_ERROR_AND_THROW("Failed to remap resource bindings in shader '", pShader->GetDesc().Name, "'.");
             }
+
+            if (gAddShaderBinary)
+            {
+                gAddShaderBinary(pBytecode->GetBufferPointer(), pBytecode->GetBufferSize());
+                gAddShaderBinary(pBlob->GetBufferPointer(), pBlob->GetBufferSize());
+            }
+
             pBytecode = pBlob;
         }
     }

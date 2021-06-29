@@ -345,6 +345,7 @@ public:
     {
         std::lock_guard<std::mutex> LockGuard(m_ReleaseQueueMutex);
 
+        //LOG_INFO_MESSAGE("Purge Fence:", CompletedFenceValue);
         // Release all objects whose associated fence value is at most CompletedFenceValue
         // See http://diligentgraphics.com/diligent-engine/architecture/d3d12/managing-resource-lifetimes/
         while (!m_ReleaseQueue.empty())

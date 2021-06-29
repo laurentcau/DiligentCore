@@ -565,13 +565,26 @@ void ShaderResourceCacheD3D12::Resource::DvpVerifyResourceState()
         {
             const auto* pTexViewD3D12 = pObject.RawPtr<const TextureViewD3D12Impl>();
             const auto* pTexD3D12     = pTexViewD3D12->GetTexture<TextureD3D12Impl>();
-            if (pTexD3D12->IsInKnownState() && !pTexD3D12->CheckAnyState(RESOURCE_STATE_SHADER_RESOURCE | RESOURCE_STATE_INPUT_ATTACHMENT))
+            if (pTexD3D12->IsInKnownState())
             {
-                LOG_ERROR_MESSAGE("Texture '", pTexD3D12->GetDesc().Name, "' must be in RESOURCE_STATE_SHADER_RESOURCE state. Actual state: ",
-                                  GetResourceStateString(pTexD3D12->GetState()),
-                                  ". Call IDeviceContext::TransitionShaderResources(), use RESOURCE_STATE_TRANSITION_MODE_TRANSITION "
-                                  "when calling IDeviceContext::CommitShaderResources() or explicitly transition the texture state "
-                                  "with IDeviceContext::TransitionResourceStates().");
+                auto currentState = pTexD3D12->GetState();
+                if (currentState == RESOURCE_STATE_DEPTH_WRITE || currentState == RESOURCE_STATE_RENDER_TARGET)
+                {
+                    LOG_WARNING_MESSAGE("Texture '", pTexD3D12->GetDesc().Name, "' should be in RESOURCE_STATE_SHADER_RESOURCE state. Actual state: ",
+                                      GetResourceStateString(pTexD3D12->GetState()),
+                                      ". It's valid if the texture is used in both rendertarget and shader resource.");
+                }
+                else
+                {
+                    if (!pTexD3D12->CheckAnyState(RESOURCE_STATE_SHADER_RESOURCE | RESOURCE_STATE_INPUT_ATTACHMENT))
+                    {
+                        LOG_ERROR_MESSAGE("Texture '", pTexD3D12->GetDesc().Name, "' must be in RESOURCE_STATE_SHADER_RESOURCE state. Actual state: ",
+                                          GetResourceStateString(pTexD3D12->GetState()),
+                                          ". Call IDeviceContext::TransitionShaderResources(), use RESOURCE_STATE_TRANSITION_MODE_TRANSITION "
+                                          "when calling IDeviceContext::CommitShaderResources() or explicitly transition the texture state "
+                                          "with IDeviceContext::TransitionResourceStates().");
+                    }
+                }
             }
         }
         break;
